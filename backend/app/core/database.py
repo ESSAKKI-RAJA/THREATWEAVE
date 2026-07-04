@@ -30,6 +30,11 @@ class DatabaseManager:
         settings = get_settings()
         db_url = settings.DATABASE_URL
 
+        if not db_url:
+            logger.warning("DATABASE_URL is not configured. Database connection pool will not be initialized. Operating in degraded/offline mode.")
+            self.pool = None
+            return
+
         # Determine SSL mode. In production (e.g. Render, Supabase), require sslmode=require if not specified
         if settings.ENV.upper() != "LOCAL" and "sslmode" not in db_url:
             separator = "&" if "?" in db_url else "?"

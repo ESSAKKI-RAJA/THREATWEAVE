@@ -356,7 +356,10 @@ function Dashboard() {
       {/* Header Panel */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-outline-variant pb-6">
         <div>
-          <h2 data-testid="dashboard-header" className="text-3xl font-extrabold text-white tracking-tight uppercase font-headline-lg">
+          <h2
+            data-testid="dashboard-header"
+            className="text-3xl font-extrabold text-white tracking-tight uppercase font-headline-lg"
+          >
             Executive Dashboard
           </h2>
           <p className="text-sm text-on-surface-variant mt-1 font-body-md">
@@ -725,7 +728,7 @@ function Dashboard() {
                                 <Play className="w-4 h-4" /> Run Deep Scan
                               </ContextMenu.Item>
                               <ContextMenu.Separator className="h-px bg-outline-variant my-1" />
-                              <ContextMenu.Item 
+                              <ContextMenu.Item
                                 className="px-2 py-1.5 text-red-400 hover:bg-red-500/10 hover:text-red-300 outline-none cursor-pointer rounded flex items-center gap-2"
                                 onSelect={() => setVendorToDelete(v.id)}
                               >
@@ -1014,11 +1017,14 @@ function Dashboard() {
         <DialogContent className="bg-surface border-outline-variant text-white sm:max-w-[425px] overflow-hidden p-0 shadow-2xl">
           <div className="bg-red-500/10 p-4 border-b border-red-500/20 flex items-center gap-3">
             <Shield className="w-6 h-6 text-red-500" />
-            <h3 className="font-mono text-sm uppercase text-red-400 font-bold tracking-wider">Confirm Removal</h3>
+            <h3 className="font-mono text-sm uppercase text-red-400 font-bold tracking-wider">
+              Confirm Removal
+            </h3>
           </div>
           <div className="p-6">
             <p className="text-sm text-on-surface-variant font-body-md mb-4">
-              Are you sure you want to remove this vendor from monitoring? This action cannot be undone and will delete all associated risk intelligence data.
+              Are you sure you want to remove this vendor from monitoring? This action cannot be
+              undone and will delete all associated risk intelligence data.
             </p>
             <div className="flex justify-end gap-3 mt-6">
               <Button

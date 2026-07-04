@@ -29,13 +29,15 @@ export const createInvestigation = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const db = readMockDb();
     if (!db.investigations) db.investigations = [];
-    
+
     const newCase: Investigation = {
-      id: `CAS-${Math.floor(Math.random() * 10000).toString().padStart(4, "0")}`,
+      id: `CAS-${Math.floor(Math.random() * 10000)
+        .toString()
+        .padStart(4, "0")}`,
       date: new Date().toISOString().split("T")[0],
       ...data,
     };
-    
+
     db.investigations.push(newCase);
     writeMockDb(db);
     return newCase;

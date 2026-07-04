@@ -427,7 +427,12 @@ export async function handleApiRequest(request: Request): Promise<Response> {
     }
 
     // CSV Export endpoint for Single Vendor
-    if (method === "GET" && pathParts.length === 5 && pathParts[1] === "vendors" && pathParts[3] === "export") {
+    if (
+      method === "GET" &&
+      pathParts.length === 5 &&
+      pathParts[1] === "vendors" &&
+      pathParts[3] === "export"
+    ) {
       const vendorId = pathParts[2];
       const db = readMockDb();
       const vendor = db.vendors.find((v: any) => v.id === vendorId);
@@ -443,7 +448,12 @@ export async function handleApiRequest(request: Request): Promise<Response> {
     }
 
     // CSV Export endpoint for Entire Dashboard
-    if (method === "GET" && pathParts.length === 3 && pathParts[1] === "dashboard" && pathParts[2] === "export") {
+    if (
+      method === "GET" &&
+      pathParts.length === 3 &&
+      pathParts[1] === "dashboard" &&
+      pathParts[2] === "export"
+    ) {
       const db = readMockDb();
       const vendors = db.vendors || [];
       let csvContent = "Name,Domain,Sector,Risk Score,Status\r\n";

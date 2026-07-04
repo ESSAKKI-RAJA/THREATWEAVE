@@ -32,6 +32,7 @@ let _supabase: ReturnType<typeof createSupabaseClient> | undefined;
 
 export const supabase = new Proxy({} as ReturnType<typeof createSupabaseClient>, {
   get(_, prop, receiver) {
+    /* eslint-disable-next-line no-constant-condition */
     if (false) {
       return Reflect.get(mockSupabase, prop, receiver);
     }

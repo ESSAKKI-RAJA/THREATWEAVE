@@ -29,7 +29,7 @@ test.describe("Vendor Lifecycle", () => {
     await vendorRow.click({ button: "right" });
     const deleteBtn = page.locator("text=Remove from monitoring");
     await deleteBtn.click();
-    
+
     // Click confirm in dialog
     const confirmBtn = page.locator("button", { hasText: "Confirm Remove" });
     await confirmBtn.click();
@@ -44,7 +44,7 @@ test.describe("Vendor Lifecycle", () => {
   test("Context menu – Export report generates CSV", async ({ page }) => {
     // Wait for download event
     const downloadPromise = page.waitForEvent("download");
-    
+
     // Click Export Report button (the one in the header panel)
     const exportBtn = page.locator("button", { hasText: "Export Report" }).first();
     await exportBtn.click();

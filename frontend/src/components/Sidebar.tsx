@@ -5,7 +5,7 @@ import { useUIStore } from "../store/uiStore";
 export function Sidebar() {
   const location = useLocation();
   const { sidebarOpen, toggleSidebar } = useUIStore();
-  const isBypass = false;
+  const isBypass = import.meta.env.VITE_BYPASS_AUTH === "true";
 
   const navItems = [
     { name: "Dashboard", to: "/dashboard", icon: "dashboard" },

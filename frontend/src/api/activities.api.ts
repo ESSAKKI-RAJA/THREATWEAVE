@@ -48,5 +48,7 @@ export const getActivities = createServerFn({ method: "GET" })
       writeMockDb(db);
     }
     // Return sorted by time descending (newest first)
-    return db.activities.sort((a: any, b: any) => new Date(b.time).getTime() - new Date(a.time).getTime()) as ActivityLog[];
+    return db.activities.sort(
+      (a: any, b: any) => new Date(b.time).getTime() - new Date(a.time).getTime(),
+    ) as ActivityLog[];
   });

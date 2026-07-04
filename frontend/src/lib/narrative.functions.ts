@@ -139,7 +139,8 @@ export const generateNarrative = createServerFn({ method: "POST" })
     let narrative: NarrativePayload;
     let provider: "claude" | "lovable-ai" | "mock-brief";
 
-    const bypassAuth = false;
+    const bypassAuth =
+      process.env.BYPASS_AUTH === "true" || process.env.VITE_BYPASS_AUTH === "true";
     const hasKeys = !!(process.env.LOVABLE_API_KEY || process.env.ANTHROPIC_API_KEY);
 
     if (bypassAuth && !hasKeys) {

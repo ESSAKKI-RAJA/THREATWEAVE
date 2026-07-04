@@ -67,7 +67,7 @@ export default {
           console.warn(`CSRF Warning: Blocked request to ${url.pathname} from origin ${origin}`);
           return new Response(JSON.stringify({ error: "CSRF token mismatch or invalid origin" }), {
             status: 403,
-            headers: { "Content-Type": "application/json" }
+            headers: { "Content-Type": "application/json" },
           });
         }
       }

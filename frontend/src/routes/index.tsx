@@ -44,9 +44,7 @@ function Landing() {
           THREATWEAVE
         </div>
         <Link to={destRoute}>
-          <Button size="sm">
-            Sign in
-          </Button>
+          <Button size="sm">Sign in</Button>
         </Link>
       </header>
       <section className="mx-auto max-w-4xl px-4 py-24 text-center">

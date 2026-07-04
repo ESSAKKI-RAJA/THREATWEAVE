@@ -26,30 +26,32 @@ async function globalSetup(config: FullConfig) {
     const password = process.env.E2E_TEST_PASSWORD;
 
     if (!email || !password) {
-      throw new Error("E2E_TEST_EMAIL and E2E_TEST_PASSWORD environment variables are missing. Please set them to run authentication tests.");
+      throw new Error(
+        "E2E_TEST_EMAIL and E2E_TEST_PASSWORD environment variables are missing. Please set them to run authentication tests.",
+      );
     }
 
     console.log(`Authenticating with Clerk as ${email}`);
 
     // Fill Clerk (or custom) login form
     const emailInput = page.locator('input[type="email"], input[name="identifier"]').first();
-    await emailInput.waitFor({ state: 'visible', timeout: 5000 });
+    await emailInput.waitFor({ state: "visible", timeout: 5000 });
     await emailInput.fill(email);
 
     // Depending on the Clerk UI version, there might be a continue button
-    const continueBtn = page.locator('.cl-formButtonPrimary');
+    const continueBtn = page.locator(".cl-formButtonPrimary");
     if (await continueBtn.isVisible()) {
       await continueBtn.click();
     }
 
     const passwordInput = page.locator('input[type="password"], input[name="password"]').first();
-    await passwordInput.waitFor({ state: 'visible', timeout: 5000 });
+    await passwordInput.waitFor({ state: "visible", timeout: 5000 });
     await passwordInput.fill(password);
 
     if (await continueBtn.isVisible()) {
-        await continueBtn.click();
+      await continueBtn.click();
     } else {
-        await passwordInput.press('Enter');
+      await passwordInput.press("Enter");
     }
 
     // Wait for the redirect back to the app and the dashboard to load
@@ -58,11 +60,11 @@ async function globalSetup(config: FullConfig) {
 
   // Save the authenticated state
   const storageStatePath = path.resolve(process.cwd(), "playwright/.auth/user.json");
-  
+
   // Ensure the directory exists
   const dir = path.dirname(storageStatePath);
-  if (!fs.existsSync(dir)){
-      fs.mkdirSync(dir, { recursive: true });
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
   }
 
   await page.context().storageState({ path: storageStatePath });

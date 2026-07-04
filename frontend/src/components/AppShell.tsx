@@ -9,7 +9,7 @@ export function AppShell() {
   const location = useLocation();
   const { sidebarOpen, toggleSidebar } = useUIStore();
   const isVendorDetail = location.pathname.match(/^\/vendors\/[^/]+$/);
-  const isBypass = false;
+  const isBypass = import.meta.env.VITE_BYPASS_AUTH === "true";
 
   const content = (
     <div className="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col md:flex-row antialiased selection:bg-teal-900 selection:text-teal-100">

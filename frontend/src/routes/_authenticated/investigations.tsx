@@ -4,7 +4,14 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getInvestigations } from "@/api/investigations.api";
 import { toast } from "sonner";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,6 +24,7 @@ export const Route = createFileRoute("/_authenticated/investigations")({
 
 function InvestigationsDashboard() {
   const fetchInvestigations = useServerFn(getInvestigations);
+  const createFn = useServerFn(createInvestigation);
   const { data: cases = [], isLoading } = useQuery({
     queryKey: ["investigations"],
     queryFn: () => fetchInvestigations(),
@@ -28,8 +36,12 @@ function InvestigationsDashboard() {
   const [priority, setPriority] = React.useState("Medium");
 
   const createMutation = useMutation({
-    mutationFn: async (data: { title: string; assignee: string; priority: string; status: string }) => {
-      const createFn = useServerFn(createInvestigation);
+    mutationFn: async (data: {
+      title: string;
+      assignee: string;
+      priority: string;
+      status: string;
+    }) => {
       return createFn(data);
     },
     onSuccess: () => {
@@ -142,20 +154,38 @@ function InvestigationsDashboard() {
         <DialogContent className="bg-slate-900 border-slate-800 text-white">
           <DialogHeader>
             <DialogTitle>Create New Investigation Case</DialogTitle>
-            <DialogDescription className="text-slate-400">Enter details for the new forensic investigation.</DialogDescription>
+            <DialogDescription className="text-slate-400">
+              Enter details for the new forensic investigation.
+            </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleCreate} className="space-y-4 pt-4">
             <div className="space-y-2">
               <Label>Case Title</Label>
-              <Input value={title} onChange={(e) => setTitle(e.target.value)} required className="bg-slate-950 border-slate-800 text-white" placeholder="e.g. Compromised S3 Bucket" />
+              <Input
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+                className="bg-slate-950 border-slate-800 text-white"
+                placeholder="e.g. Compromised S3 Bucket"
+              />
             </div>
             <div className="space-y-2">
               <Label>Assignee</Label>
-              <Input value={assignee} onChange={(e) => setAssignee(e.target.value)} required className="bg-slate-950 border-slate-800 text-white" placeholder="e.g. jdoe@example.com" />
+              <Input
+                value={assignee}
+                onChange={(e) => setAssignee(e.target.value)}
+                required
+                className="bg-slate-950 border-slate-800 text-white"
+                placeholder="e.g. jdoe@example.com"
+              />
             </div>
             <div className="space-y-2">
               <Label>Priority</Label>
-              <select value={priority} onChange={(e) => setPriority(e.target.value)} className="w-full h-10 px-3 py-2 rounded-md bg-slate-950 border border-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-900">
+              <select
+                value={priority}
+                onChange={(e) => setPriority(e.target.value)}
+                className="w-full h-10 px-3 py-2 rounded-md bg-slate-950 border border-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-900"
+              >
                 <option value="Low">Low</option>
                 <option value="Medium">Medium</option>
                 <option value="High">High</option>
@@ -163,8 +193,21 @@ function InvestigationsDashboard() {
               </select>
             </div>
             <DialogFooter className="pt-4">
-              <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)} className="bg-slate-950 text-white border-slate-800 hover:bg-slate-800">Cancel</Button>
-              <Button type="submit" className="bg-teal-600 text-white hover:bg-teal-500" disabled={createMutation.isPending}>{createMutation.isPending ? "Creating..." : "Create Case"}</Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsModalOpen(false)}
+                className="bg-slate-950 text-white border-slate-800 hover:bg-slate-800"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                className="bg-teal-600 text-white hover:bg-teal-500"
+                disabled={createMutation.isPending}
+              >
+                {createMutation.isPending ? "Creating..." : "Create Case"}
+              </Button>
             </DialogFooter>
           </form>
         </DialogContent>

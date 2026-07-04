@@ -33,8 +33,12 @@ function LoginComponent() {
               formFieldLabel: "text-slate-300",
               formFieldInput:
                 "bg-slate-950 border-slate-800 text-slate-100 focus:ring-teal-500 focus:border-teal-500",
-              footerActionText: import.meta.env.VITE_AUTH_MODE === "public" ? "text-slate-400" : "hidden",
-              footerActionLink: import.meta.env.VITE_AUTH_MODE === "public" ? "text-teal-500 hover:text-teal-400" : "hidden",
+              footerActionText:
+                import.meta.env.VITE_AUTH_MODE === "public" ? "text-slate-400" : "hidden",
+              footerActionLink:
+                import.meta.env.VITE_AUTH_MODE === "public"
+                  ? "text-teal-500 hover:text-teal-400"
+                  : "hidden",
               identityPreviewText: "text-slate-300",
               identityPreviewEditButton: "text-teal-500 hover:text-teal-400",
               dividerLine: "bg-slate-800",

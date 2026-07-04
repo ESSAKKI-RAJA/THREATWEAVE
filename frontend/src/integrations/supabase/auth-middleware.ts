@@ -16,7 +16,8 @@ import type { Database } from "./types";
  */
 export const requireSupabaseAuth = createMiddleware({ type: "function" }).server(
   async ({ next }) => {
-    const bypassAuth = false;
+    const bypassAuth =
+      process.env.BYPASS_AUTH === "true" || process.env.VITE_BYPASS_AUTH === "true";
 
     if (bypassAuth) {
       const { mockSupabase } = await import("./mock-db");
@@ -54,7 +55,7 @@ async function handleClerkAuth(next: any, secretKey: string) {
     const { verifyToken } = await import("@clerk/backend");
     const { getRequest } = await import("@tanstack/react-start/server");
     const request = getRequest();
-    
+
     let clerkToken = "";
     if (request) {
       const authHeader = request.headers.get("Authorization");
