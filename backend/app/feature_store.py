@@ -1,25 +1,32 @@
-import psycopg2
+import logging
+import threading
 import pandas as pd
-import json
-import os
 from typing import List, Dict, Any, Optional
-from datetime import datetime
+from app.core.database import db_manager
+from app.core.exceptions import DatabaseConnectionError, StartupInitializationError
+
+logger = logging.getLogger(__name__)
 
 class FeatureStore:
+    _instance = None
+    _lock = threading.Lock()
+
+    def __new__(cls, *args, **kwargs):
+        with cls._lock:
+            if cls._instance is None:
+                cls._instance = super(FeatureStore, cls).__new__(cls)
+                cls._instance._initialized = False
+            return cls._instance
+
     def __init__(self):
-        self.db_url = os.environ.get("DATABASE_URL", "postgresql://postgres:postgres@localhost:54322/postgres")
-        self._init_db()
+        if self._initialized:
+            return
+        self._initialized = True
 
-    def get_connection(self):
-        return psycopg2.connect(self.db_url)
-
-    def _init_db(self):
-        # We need a table to store feature metadata if it doesn't exist
-        # But we assume THREATWEAVE schema holds actual features in vendor_risk_history or similar.
-        # This table just tracks feature definitions.
-        conn = self.get_connection()
-        cur = conn.cursor()
-        cur.execute("""
+    def init_db(self):
+        """Initializes tables. Called during FastAPI startup lifespan, not import time."""
+        logger.info("Initializing Feature Store tables...")
+        query = """
             CREATE TABLE IF NOT EXISTS ml_feature_definitions (
                 feature_name VARCHAR(255) PRIMARY KEY,
                 description TEXT,
@@ -27,50 +34,60 @@ class FeatureStore:
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
-        """)
-        conn.commit()
-        cur.close()
-        conn.close()
+        """
+        try:
+            db_manager.execute_query(query, commit=True)
+            logger.info("Feature Store tables verified/created successfully.")
+        except Exception as e:
+            logger.error(f"Failed to initialize Feature Store database: {str(e)}")
+            raise StartupInitializationError(f"Feature Store DB init failed: {str(e)}") from e
+
+    def get_connection(self):
+        """Keep backward compatibility for other modules if they call get_connection() directly."""
+        return db_manager.get_connection()
 
     def register_feature(self, name: str, description: str, data_type: str = "float"):
-        conn = self.get_connection()
-        cur = conn.cursor()
-        cur.execute("""
+        query = """
             INSERT INTO ml_feature_definitions (feature_name, description, data_type)
             VALUES (%s, %s, %s)
             ON CONFLICT (feature_name) 
             DO UPDATE SET description = EXCLUDED.description, data_type = EXCLUDED.data_type, updated_at = CURRENT_TIMESTAMP;
-        """, (name, description, data_type))
-        conn.commit()
-        cur.close()
-        conn.close()
+        """
+        try:
+            db_manager.execute_query(query, (name, description, data_type), commit=True)
+        except Exception as e:
+            logger.error(f"Failed to register feature {name}: {str(e)}")
+            raise DatabaseConnectionError(f"Register feature failed: {str(e)}") from e
 
     def get_historical_features(self, vendor_id: str, feature_names: List[str] = None) -> pd.DataFrame:
-        """
-        Retrieves offline features for training.
-        Assuming primary table is vendor_risk_history, we return a dataframe.
-        """
-        conn = self.get_connection()
-        query = f"SELECT snapshot_date, risk_score FROM vendor_risk_history WHERE vendor_id = '{vendor_id}' ORDER BY snapshot_date ASC"
-        df = pd.read_sql(query, conn)
-        conn.close()
-        
-        if df.empty:
+        """Retrieves offline features for training."""
+        conn = None
+        try:
+            conn = db_manager.get_connection()
+            query = "SELECT snapshot_date, risk_score FROM vendor_risk_history WHERE vendor_id = %s ORDER BY snapshot_date ASC"
+            df = pd.read_sql(query, conn, params=(vendor_id,))
+            
+            if df.empty:
+                return df
+                
+            df['snapshot_date'] = pd.to_datetime(df['snapshot_date'])
+            df.set_index('snapshot_date', inplace=True)
+            # Ensure daily frequency
+            df = df.resample('D').ffill()
+            if df['risk_score'].isnull().any():
+                df['risk_score'] = df['risk_score'].ffill().bfill()
+                
             return df
-            
-        df['snapshot_date'] = pd.to_datetime(df['snapshot_date'])
-        df.set_index('snapshot_date', inplace=True)
-        # Ensure daily frequency
-        df = df.resample('D').ffill()
-        if df['risk_score'].isnull().any():
-            df['risk_score'] = df['risk_score'].fillna(method='bfill')
-            
-        return df
+        except Exception as e:
+            logger.error(f"Failed to retrieve historical features for vendor {vendor_id}: {str(e)}")
+            # Return empty DataFrame as a graceful fallback instead of crashing
+            return pd.DataFrame()
+        finally:
+            if conn:
+                db_manager.release_connection(conn)
 
     def get_online_features(self, vendor_id: str) -> Dict[str, Any]:
-        """
-        Retrieves the latest features for online inference.
-        """
+        """Retrieves the latest features for online inference."""
         df = self.get_historical_features(vendor_id)
         if df.empty:
             return {}

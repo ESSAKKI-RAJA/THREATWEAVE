@@ -9,6 +9,7 @@ from statsmodels.tsa.arima.model import ARIMA
 from prophet import Prophet
 import joblib
 import logging
+from contextlib import asynccontextmanager
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 try:
@@ -17,26 +18,92 @@ try:
 except ImportError:
     HAS_TF = False
 
-from dotenv import load_dotenv
+from app.core.config import get_settings
+from app.core.database import db_manager
+from app.core.exceptions import ThreatWeaveError, ConfigurationError
 from app.feature_store import FeatureStore
 from app.model_registry import ModelRegistry
 
 from app.api.v1 import threats, vendors, alerts, investigations, analytics
 
-load_dotenv()
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
+logger = logging.getLogger("threatweave.forecasting")
 
-app = FastAPI(title="THREATWEAVE Forecasting Service")
+# Instantiate service components lazily (no connections happen here)
+feature_store = FeatureStore()
+model_registry = ModelRegistry()
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup Lifecycle Phase
+    logger.info("========================================================")
+    logger.info("THREATWEAVE FORECASTING SERVICE STARTUP INITIALIZATION")
+    logger.info("========================================================")
+    
+    try:
+        settings = get_settings()
+    except Exception as ce:
+        logger.critical(f"[CONFIG ERROR] Configuration validation failed: {str(ce)}")
+        # Raise exception to prevent application from starting without a valid config
+        raise RuntimeError(f"Startup failed due to configuration error: {str(ce)}") from ce
+        
+    logger.info(f"Target Environment: {settings.ENV}")
+    logger.info(f"Binds Host: {settings.HOST}, Port: {settings.PORT}")
+    
+    # Securely log Database Host details (masking user/password)
+    try:
+        from urllib.parse import urlparse
+        parsed = urlparse(settings.DATABASE_URL)
+        logger.info(f"Connecting to database: {parsed.scheme}://{parsed.hostname or 'localhost'}:{parsed.port or 5432}/{parsed.path.lstrip('/')}")
+    except Exception:
+        logger.info("Connecting to database: [Secure Masked Connection String]")
+
+    # Initialize connection pool
+    logger.info("Step 1: Setting up database connection pool...")
+    db_manager.initialize_pool()
+
+    # Verify database structures exist
+    logger.info("Step 2: Testing connection & running schema synchronization...")
+    try:
+        feature_store.init_db()
+        model_registry.init_db()
+        logger.info("Step 3: Database schema initialized successfully.")
+    except Exception as e:
+        logger.error(f"[SCHEMA ERROR] Failed to initialize DB schemas: {str(e)}. Running in degraded state.")
+
+    # Diagnostic checks for available ML models
+    logger.info("Step 4: Scanning registered ML models...")
+    try:
+        prod_lstm = model_registry.get_production_model("cyber_risk_lstm")
+        if prod_lstm:
+            logger.info(f"Active production model: {prod_lstm['model_name']} version {prod_lstm['version']}")
+        else:
+            logger.warning("No production LSTM model is registered yet. Run train_lstm.py to create one.")
+    except Exception as e:
+        logger.error(f"[MODEL ERROR] Failed to check model registry status: {str(e)}")
+
+    logger.info("Startup sequence completed. Application is ready to receive requests.")
+    logger.info("========================================================")
+    
+    yield
+    
+    # Shutdown Lifecycle Phase
+    logger.info("========================================================")
+    logger.info("THREATWEAVE FORECASTING SERVICE SHUTDOWN")
+    logger.info("========================================================")
+    logger.info("Closing active resources...")
+    db_manager.close_all()
+    logger.info("Resource cleanup completed.")
+    logger.info("========================================================")
+
+app = FastAPI(title="THREATWEAVE Forecasting Service", lifespan=lifespan)
+
+# Include route managers
 app.include_router(threats.router, prefix="/api/v1/threats", tags=["threats"])
 app.include_router(vendors.router, prefix="/api/v1/vendors", tags=["vendors"])
 app.include_router(alerts.router, prefix="/api/v1/alerts", tags=["alerts"])
 app.include_router(investigations.router, prefix="/api/v1/investigations", tags=["investigations"])
 app.include_router(analytics.router, prefix="/api/v1/analytics", tags=["analytics"])
-
-
-feature_store = FeatureStore()
-model_registry = ModelRegistry()
 
 class ForecastRequest(BaseModel):
     vendor_id: str
@@ -51,6 +118,55 @@ class ForecastResponse(BaseModel):
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
+
+@app.get("/liveness")
+def liveness_check():
+    return {"status": "alive"}
+
+@app.get("/readiness")
+def readiness_check():
+    db_status = "unhealthy"
+    db_details = None
+    try:
+        conn = db_manager.get_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT 1;")
+        cur.fetchone()
+        db_status = "healthy"
+        cur.close()
+        db_manager.release_connection(conn)
+    except Exception as e:
+        db_details = str(e)
+        logger.error(f"Readiness check failed for Database: {db_details}")
+
+    model_status = "unhealthy"
+    model_details = None
+    try:
+        prod_model = model_registry.get_production_model("cyber_risk_lstm")
+        if prod_model:
+            model_status = "healthy"
+            model_details = f"version {prod_model['version']}"
+        else:
+            model_status = "no_model_registered"
+    except Exception as e:
+        model_details = str(e)
+        logger.error(f"Readiness check failed for Model Registry: {model_details}")
+
+    status = "ready" if db_status == "healthy" else "degraded"
+    
+    return {
+        "status": status,
+        "checks": {
+            "database": {
+                "status": db_status,
+                "error": db_details
+            },
+            "model_registry": {
+                "status": model_status,
+                "details": model_details
+            }
+        }
+    }
 
 def get_fallback(df: pd.DataFrame, periods: int) -> ForecastResponse:
     base_val = 50.0
@@ -97,7 +213,7 @@ def forecast_arima(req: ForecastRequest):
             confidence_upper=conf_u
         )
     except Exception as e:
-        logging.error(f"[ML Resilience] ARIMA forecasting failed for vendor {req.vendor_id}: {str(e)}")
+        logger.error(f"[ML Resilience] ARIMA forecasting failed for vendor {req.vendor_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=f"ARIMA error: {str(e)}")
 
 @app.post("/forecast/prophet", response_model=ForecastResponse)
@@ -130,7 +246,7 @@ def forecast_prophet(req: ForecastRequest):
             confidence_upper=conf_u
         )
     except Exception as e:
-        logging.error(f"[ML Resilience] Prophet forecasting failed for vendor {req.vendor_id}: {str(e)}")
+        logger.error(f"[ML Resilience] Prophet forecasting failed for vendor {req.vendor_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Prophet error: {str(e)}")
 
 @app.post("/forecast/lstm", response_model=ForecastResponse)
@@ -179,12 +295,11 @@ def forecast_lstm(req: ForecastRequest):
             confidence_upper=conf_u
         )
     except Exception as e:
-        logging.error(f"[ML Resilience] LSTM prediction error for vendor {req.vendor_id}: {str(e)}")
+        logger.error(f"[ML Resilience] LSTM prediction error for vendor {req.vendor_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=f"LSTM prediction error: {str(e)}")
 
 @app.post("/forecast/ensemble", response_model=ForecastResponse)
 def forecast_ensemble(req: ForecastRequest):
-    # Ensemble combines ARIMA, Prophet, and LSTM
     arima_res = forecast_arima(req)
     prophet_res = forecast_prophet(req)
     

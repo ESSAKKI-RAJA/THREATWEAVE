@@ -8,7 +8,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def get_db_connection():
-    db_url = os.environ.get("DATABASE_URL", "postgresql://postgres:postgres@localhost:54322/postgres")
+    from app.core.config import get_settings
+    settings = get_settings()
+    db_url = settings.DATABASE_URL
+    if settings.ENV.upper() != "LOCAL" and "sslmode" not in db_url:
+        separator = "&" if "?" in db_url else "?"
+        db_url = f"{db_url}{separator}sslmode=require"
     return psycopg2.connect(db_url)
 
 def generate_history():

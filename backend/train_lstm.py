@@ -19,9 +19,16 @@ def create_dataset(dataset, look_back=60, look_forward=30):
     return np.array(X), np.array(Y)
 
 def train_model():
-    print("Initializing Feature Store and Model Registry...")
+    print("Initializing Database Manager, Feature Store and Model Registry...")
+    from app.core.database import db_manager
+    db_manager.initialize_pool(retries=3)
+    
     feature_store = FeatureStore()
     registry = ModelRegistry()
+    
+    # Initialize DB tables explicitly
+    feature_store.init_db()
+    registry.init_db()
 
     # Get data for all vendors. In a real scenario, we'd query distinct vendor_ids.
     # We will simulate pulling raw feature data from FeatureStore DB by querying vendor_risk_history directly.
