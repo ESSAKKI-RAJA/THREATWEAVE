@@ -7,34 +7,67 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-.output
-.vinxi
+# Dependency directories
+node_modules/
+frontend/node_modules/
+backend/node_modules/
+backend/.venv/
+venv/
+.venv/
+
+# Build outputs
+dist/
+dist-ssr/
+.output/
+.vinxi/
 .tanstack/**
-.nitro
-*.local
+.nitro/
+frontend/dist/
+frontend/dist-ssr/
+frontend/.output/
+frontend/.vinxi/
+frontend/.tanstack/**
+frontend/.nitro/
 
 # Environment files
 .env
 .env.*
 !.env.example
 **/.env
+
 # Wrangler / Cloudflare
 .wrangler/
 .dev.vars
+frontend/.wrangler/
+frontend/.dev.vars
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+*~
+*.bak
 
-# clerk configuration (can include secrets)
-/.clerk/
+# Clerk configuration
+.clerk/
+frontend/.clerk/
+
+# Testing and reports
+.pytest_cache/
+backend/.pytest_cache/
+playwright-report/
+frontend/playwright-report/
+test-results/
+frontend/test-results/
+*.report.html
+lighthouse-report.json
+__pycache__/
+**/__pycache__/
+
+

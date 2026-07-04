@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   app:
-    build: .
+    build: ./frontend
     ports:
       - "3000:3000"
     environment:
@@ -19,7 +19,7 @@ services:
       - forecasting
 
   forecasting:
-    build: ./forecasting-service
+    build: ./backend
     ports:
       - "8000:8000"
     environment:
