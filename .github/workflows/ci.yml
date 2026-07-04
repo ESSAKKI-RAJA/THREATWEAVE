@@ -1,0 +1,81 @@
+name: THREATWEAVE CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test-node:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install Node Dependencies
+        run: npm ci
+
+      - name: Lint Code
+        run: npm run lint
+
+      - name: Run Unit Tests
+        run: npm run test -- --run
+
+      - name: Build Application
+        run: npm run build
+        env:
+          NODE_ENV: production
+          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+
+  build-and-test-python:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install Python Dependencies
+        run: |
+          cd forecasting-service
+          pip install -r requirements.txt
+
+      - name: Run Python Checks (Placeholder for pytest)
+        run: |
+          cd forecasting-service
+          # echo "Running tests..." # uncomment when tests exist
+
+  security-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: NPM Audit
+        run: npm audit --audit-level=high
+
+      - name: Run Secret Scanner (TruffleHog)
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: ${{ github.event.repository.default_branch }}
+          head: HEAD
