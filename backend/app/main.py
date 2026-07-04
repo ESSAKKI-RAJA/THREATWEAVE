@@ -5,8 +5,22 @@ import numpy as np
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List, Optional
-from statsmodels.tsa.arima.model import ARIMA
-from prophet import Prophet
+HAS_STATS = True
+try:
+    from statsmodels.tsa.arima.model import ARIMA
+except Exception as e:
+    import logging
+    logging.getLogger("threatweave.forecasting").warning(f"Failed to import statsmodels (ARIMA): {e}")
+    HAS_STATS = False
+
+HAS_PROPHET = True
+try:
+    from prophet import Prophet
+except Exception as e:
+    import logging
+    logging.getLogger("threatweave.forecasting").warning(f"Failed to import Prophet: {e}")
+    HAS_PROPHET = False
+
 import joblib
 import logging
 from contextlib import asynccontextmanager
@@ -47,14 +61,21 @@ async def lifespan(app: FastAPI):
         # Raise exception to prevent application from starting without a valid config
         raise RuntimeError(f"Startup failed due to configuration error: {str(ce)}") from ce
         
+    import sys
+    logger.info(f"Python Version: {sys.version}")
+    logger.info(f"Working Directory: {os.getcwd()}")
     logger.info(f"Target Environment: {settings.ENV}")
     logger.info(f"Binds Host: {settings.HOST}, Port: {settings.PORT}")
+    logger.info(f"DATABASE_URL Configured: {bool(settings.DATABASE_URL)}")
     
     # Securely log Database Host details (masking user/password)
     try:
-        from urllib.parse import urlparse
-        parsed = urlparse(settings.DATABASE_URL)
-        logger.info(f"Connecting to database: {parsed.scheme}://{parsed.hostname or 'localhost'}:{parsed.port or 5432}/{parsed.path.lstrip('/')}")
+        if settings.DATABASE_URL:
+            from urllib.parse import urlparse
+            parsed = urlparse(settings.DATABASE_URL)
+            logger.info(f"Connecting to database: {parsed.scheme}://{parsed.hostname or 'localhost'}:{parsed.port or 5432}/{parsed.path.lstrip('/')}")
+        else:
+            logger.info("Connecting to database: None (DATABASE_URL empty)")
     except Exception:
         logger.info("Connecting to database: [Secure Masked Connection String]")
 
@@ -65,22 +86,37 @@ async def lifespan(app: FastAPI):
     # Verify database structures exist
     logger.info("Step 2: Testing connection & running schema synchronization...")
     try:
-        feature_store.init_db()
-        model_registry.init_db()
-        logger.info("Step 3: Database schema initialized successfully.")
+        if db_manager.pool:
+            feature_store.init_db()
+            model_registry.init_db()
+            logger.info("Step 3: Database schema initialized successfully.")
+        else:
+            logger.info("Step 3: Skipping DB schema sync (running in degraded offline mode).")
     except Exception as e:
         logger.error(f"[SCHEMA ERROR] Failed to initialize DB schemas: {str(e)}. Running in degraded state.")
 
     # Diagnostic checks for available ML models
     logger.info("Step 4: Scanning registered ML models...")
     try:
-        prod_lstm = model_registry.get_production_model("cyber_risk_lstm")
-        if prod_lstm:
-            logger.info(f"Active production model: {prod_lstm['model_name']} version {prod_lstm['version']}")
+        if db_manager.pool:
+            prod_lstm = model_registry.get_production_model("cyber_risk_lstm")
+            if prod_lstm:
+                logger.info(f"Active production model: {prod_lstm['model_name']} version {prod_lstm['version']}")
+            else:
+                logger.warning("No production LSTM model is registered yet. Run train_lstm.py to create one.")
         else:
-            logger.warning("No production LSTM model is registered yet. Run train_lstm.py to create one.")
+            logger.warning("Database unavailable. Scanning registered ML models skipped.")
     except Exception as e:
         logger.error(f"[MODEL ERROR] Failed to check model registry status: {str(e)}")
+
+    # Log loaded routes
+    routes = []
+    for route in app.routes:
+        if hasattr(route, "path"):
+            methods = getattr(route, "methods", None)
+            methods_str = f" [{','.join(methods)}]" if methods else ""
+            routes.append(f"{route.path}{methods_str}")
+    logger.info(f"Loaded routes: {', '.join(routes)}")
 
     logger.info("Startup sequence completed. Application is ready to receive requests.")
     logger.info("========================================================")
@@ -115,6 +151,16 @@ class ForecastResponse(BaseModel):
     confidence_lower: List[float]
     confidence_upper: List[float]
 
+@app.get("/")
+def root_check():
+    return {
+        "service": "THREATWEAVE Forecasting Service",
+        "status": "online",
+        "health_check_url": "/health",
+        "liveness_check_url": "/liveness",
+        "readiness_check_url": "/readiness"
+    }
+
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
@@ -128,13 +174,17 @@ def readiness_check():
     db_status = "unhealthy"
     db_details = None
     try:
-        conn = db_manager.get_connection()
-        cur = conn.cursor()
-        cur.execute("SELECT 1;")
-        cur.fetchone()
-        db_status = "healthy"
-        cur.close()
-        db_manager.release_connection(conn)
+        if db_manager.pool:
+            conn = db_manager.get_connection()
+            cur = conn.cursor()
+            cur.execute("SELECT 1;")
+            cur.fetchone()
+            db_status = "healthy"
+            cur.close()
+            db_manager.release_connection(conn)
+        else:
+            db_status = "offline"
+            db_details = "Database connection pool is not configured."
     except Exception as e:
         db_details = str(e)
         logger.error(f"Readiness check failed for Database: {db_details}")
@@ -142,17 +192,22 @@ def readiness_check():
     model_status = "unhealthy"
     model_details = None
     try:
-        prod_model = model_registry.get_production_model("cyber_risk_lstm")
-        if prod_model:
-            model_status = "healthy"
-            model_details = f"version {prod_model['version']}"
+        if db_manager.pool:
+            prod_model = model_registry.get_production_model("cyber_risk_lstm")
+            if prod_model:
+                model_status = "healthy"
+                model_details = f"version {prod_model['version']}"
+            else:
+                model_status = "no_model_registered"
+                model_details = "No production LSTM model is registered yet."
         else:
-            model_status = "no_model_registered"
+            model_status = "offline"
+            model_details = "Database unavailable; model registry status skipped."
     except Exception as e:
         model_details = str(e)
         logger.error(f"Readiness check failed for Model Registry: {model_details}")
 
-    status = "ready" if db_status == "healthy" else "degraded"
+    status = "ready" if (db_status == "healthy" or db_status == "offline") else "degraded"
     
     return {
         "status": status,
@@ -188,8 +243,14 @@ def get_fallback(df: pd.DataFrame, periods: int) -> ForecastResponse:
         confidence_upper=conf_u
     )
 
+@app.get("/forecast/arima")
 @app.post("/forecast/arima", response_model=ForecastResponse)
 def forecast_arima(req: ForecastRequest):
+    if not HAS_STATS:
+        raise HTTPException(
+            status_code=503,
+            detail="ARIMA forecasting service (statsmodels) is currently unavailable due to startup dependency failure."
+        )
     df = feature_store.get_historical_features(req.vendor_id)
     if df.empty or len(df) < 5:
         return get_fallback(df, req.periods)
@@ -218,6 +279,11 @@ def forecast_arima(req: ForecastRequest):
 
 @app.post("/forecast/prophet", response_model=ForecastResponse)
 def forecast_prophet(req: ForecastRequest):
+    if not HAS_PROPHET:
+        raise HTTPException(
+            status_code=503,
+            detail="Prophet forecasting service is currently unavailable due to startup dependency failure."
+        )
     df = feature_store.get_historical_features(req.vendor_id)
     if df.empty or len(df) < 30:
         return get_fallback(df, req.periods)
@@ -300,36 +366,72 @@ def forecast_lstm(req: ForecastRequest):
 
 @app.post("/forecast/ensemble", response_model=ForecastResponse)
 def forecast_ensemble(req: ForecastRequest):
-    arima_res = forecast_arima(req)
-    prophet_res = forecast_prophet(req)
-    
-    lstm_success = True
-    try:
-        lstm_res = forecast_lstm(req)
-    except HTTPException:
-        lstm_success = False
+    preds_list = []
+    conf_l_list = []
+    conf_u_list = []
+    dates = []
 
-    preds = []
-    conf_l = []
-    conf_u = []
-    
+    arima_success = False
+    try:
+        if HAS_STATS:
+            arima_res = forecast_arima(req)
+            arima_success = True
+    except Exception:
+        pass
+
+    prophet_success = False
+    try:
+        if HAS_PROPHET:
+            prophet_res = forecast_prophet(req)
+            prophet_success = True
+    except Exception:
+        pass
+
+    lstm_success = False
+    try:
+        if HAS_TF:
+            lstm_res = forecast_lstm(req)
+            lstm_success = True
+    except Exception:
+        pass
+
+    # If no models are successful, return fallback
+    if not (arima_success or prophet_success or lstm_success):
+        df = feature_store.get_historical_features(req.vendor_id)
+        return get_fallback(df, req.periods)
+
+    # Use whatever dates we can get
+    if arima_success:
+        dates = arima_res.dates
+    elif prophet_success:
+        dates = prophet_res.dates
+    elif lstm_success:
+        dates = lstm_res.dates
+
     for i in range(req.periods):
-        vals = [arima_res.predictions[i], prophet_res.predictions[i]]
-        cls = [arima_res.confidence_lower[i], prophet_res.confidence_lower[i]]
-        cus = [arima_res.confidence_upper[i], prophet_res.confidence_upper[i]]
-        
+        vals = []
+        cls = []
+        cus = []
+        if arima_success:
+            vals.append(arima_res.predictions[i])
+            cls.append(arima_res.confidence_lower[i])
+            cus.append(arima_res.confidence_upper[i])
+        if prophet_success:
+            vals.append(prophet_res.predictions[i])
+            cls.append(prophet_res.confidence_lower[i])
+            cus.append(prophet_res.confidence_upper[i])
         if lstm_success:
             vals.append(lstm_res.predictions[i])
             cls.append(lstm_res.confidence_lower[i])
             cus.append(lstm_res.confidence_upper[i])
-            
-        preds.append(sum(vals) / len(vals))
-        conf_l.append(sum(cls) / len(cls))
-        conf_u.append(sum(cus) / len(cus))
-        
+
+        preds_list.append(sum(vals) / len(vals))
+        conf_l_list.append(sum(cls) / len(cls))
+        conf_u_list.append(sum(cus) / len(cus))
+
     return ForecastResponse(
-        dates=arima_res.dates,
-        predictions=preds,
-        confidence_lower=conf_l,
-        confidence_upper=conf_u
+        dates=dates,
+        predictions=preds_list,
+        confidence_lower=conf_l_list,
+        confidence_upper=conf_u_list
     )
