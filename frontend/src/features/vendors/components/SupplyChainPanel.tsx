@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Share2 } from "lucide-react";
 import { useSupplyChainRisk, useSupplyChainDepth } from "../hooks/useVendorIntelligence";
 import { SupplyChainGraph } from "./SupplyChainGraph";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
@@ -29,7 +30,7 @@ export const SupplyChainPanel = ({
   return (
     <DataModule
       title="Supply Chain Cascade"
-      icon="share"
+      icon={<Share2 className="w-5 h-5" />}
       status={status}
       onRetry={() => refetch()}
       skeletonType="graph"

@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createInvestigation } from "@/api/investigations.api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Plus, User } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/investigations")({
   component: InvestigationsDashboard,
@@ -42,7 +43,7 @@ function InvestigationsDashboard() {
       priority: string;
       status: string;
     }) => {
-      return createFn(data);
+      return createFn({ data });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["investigations"] });
@@ -89,7 +90,7 @@ function InvestigationsDashboard() {
           onClick={() => setIsModalOpen(true)}
           className="px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg font-medium transition-colors shadow-sm flex items-center gap-2"
         >
-          <span className="material-symbols-outlined text-sm">add</span>
+          <Plus className="w-4 h-4" />
           New Case
         </button>
       </div>
@@ -119,7 +120,7 @@ function InvestigationsDashboard() {
               </div>
               <h3 className="text-lg font-bold text-slate-100 mb-2">{c.title}</h3>
               <p className="text-sm text-slate-400 flex items-center gap-2">
-                <span className="material-symbols-outlined text-sm">person</span>
+                <User className="w-4 h-4" />
                 {c.assignee}
               </p>
             </div>

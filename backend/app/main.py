@@ -2,7 +2,8 @@ import os
 import psycopg2
 import pandas as pd
 import numpy as np
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request, Response
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
 HAS_STATS = True
@@ -38,7 +39,8 @@ from app.core.exceptions import ThreatWeaveError, ConfigurationError
 from app.feature_store import FeatureStore
 from app.model_registry import ModelRegistry
 
-from app.api.v1 import threats, vendors, alerts, investigations, analytics
+from app.api.v1 import threats, vendors, alerts, investigations, analytics, settings
+from app.core.settings_store import SettingsStore
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 logger = logging.getLogger("threatweave.forecasting")
@@ -46,6 +48,7 @@ logger = logging.getLogger("threatweave.forecasting")
 # Instantiate service components lazily (no connections happen here)
 feature_store = FeatureStore()
 model_registry = ModelRegistry()
+settings_store = SettingsStore()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -89,6 +92,7 @@ async def lifespan(app: FastAPI):
         if db_manager.pool:
             feature_store.init_db()
             model_registry.init_db()
+            settings_store.init_db()
             logger.info("Step 3: Database schema initialized successfully.")
         else:
             logger.info("Step 3: Skipping DB schema sync (running in degraded offline mode).")
@@ -134,12 +138,33 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="THREATWEAVE Forecasting Service", lifespan=lifespan)
 
+# Add CORS Middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], # In a strict prod environment this would be specific domains
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Add Security Headers Middleware
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["Content-Security-Policy"] = "default-src 'self'"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    return response
+
 # Include route managers
 app.include_router(threats.router, prefix="/api/v1/threats", tags=["threats"])
 app.include_router(vendors.router, prefix="/api/v1/vendors", tags=["vendors"])
 app.include_router(alerts.router, prefix="/api/v1/alerts", tags=["alerts"])
 app.include_router(investigations.router, prefix="/api/v1/investigations", tags=["investigations"])
 app.include_router(analytics.router, prefix="/api/v1/analytics", tags=["analytics"])
+app.include_router(settings.router, prefix="/api/v1/settings", tags=["settings"])
 
 class ForecastRequest(BaseModel):
     vendor_id: str

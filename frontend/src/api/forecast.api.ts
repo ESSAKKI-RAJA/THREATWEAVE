@@ -4,7 +4,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export const getForecast = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .validator(z.object({ vendorId: z.string().uuid(), periods: z.number().optional().default(30) }))
+  .validator(z.object({ vendorId: z.string(), periods: z.number().optional().default(30) }))
   .handler(async ({ data }) => {
     try {
       const res = await fetch(`http://localhost:8000/forecast/arima`, {
@@ -21,7 +21,7 @@ export const getForecast = createServerFn({ method: "POST" })
 
 export const getVendorThreatFeeds = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .validator(z.object({ vendorId: z.string().uuid() }))
+  .validator(z.object({ vendorId: z.string() }))
   .handler(async ({ data, context }) => {
     // Stub implementation for compilation. In a real app, this would hit the DB or external APIs.
     return {

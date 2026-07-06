@@ -194,7 +194,7 @@ function Dashboard() {
       return res.json();
     },
     onSuccess: () => {
-      toast.success("Vendor removed from monitoring.");
+      toast.success("Vendor removed");
       queryClient.invalidateQueries({ queryKey: ["vendors"] });
       queryClient.invalidateQueries({ queryKey: ["dashboard-summary"] });
       setVendorToDelete(null);
@@ -213,12 +213,18 @@ function Dashboard() {
   };
 
   const handleExportCSV = () => {
-    if (!vendors || vendors.length === 0) {
-      toast.error("No vendors to export");
-      return;
+    try {
+      const a = document.createElement("a");
+      a.href = "/api/dashboard/export";
+      a.setAttribute("download", "");
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      toast.success("Export initiated successfully");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to initiate export");
     }
-    window.location.href = "/api/dashboard/export";
-    toast.success("Dashboard export initiated");
   };
 
   const handleAddSubmit = (e: React.FormEvent) => {
@@ -253,12 +259,12 @@ function Dashboard() {
 
   const getExposureTier = React.useCallback((score: number) => {
     if (score >= 75)
-      return { label: "Critical", style: "bg-red-500/10 text-red-500 border-red-500/20" };
+      return { label: "Critical", style: "bg-red-500/10 text-red-400 border-red-500/20" };
     if (score >= 55)
-      return { label: "High", style: "bg-amber-500/10 text-amber-500 border-amber-500/20" };
+      return { label: "High", style: "bg-amber-500/10 text-amber-400 border-amber-500/20" };
     if (score >= 25)
-      return { label: "Medium", style: "bg-blue-500/10 text-blue-500 border-blue-500/20" };
-    return { label: "Low", style: "bg-green-500/10 text-green-500 border-green-500/20" };
+      return { label: "Medium", style: "bg-blue-500/10 text-blue-400 border-blue-500/20" };
+    return { label: "Low", style: "bg-green-500/10 text-green-400 border-green-500/20" };
   }, []);
 
   const getStatusBadge = React.useCallback((status: VendorRow["status"], progress: number) => {
@@ -377,7 +383,7 @@ function Dashboard() {
           </Button>
           <Button
             onClick={() => setIsAddModalOpen(true)}
-            className="bg-primary text-white hover:bg-blue-600 gap-2 font-mono uppercase text-xs tracking-wider shadow-lg shadow-blue-500/10"
+            className="bg-blue-600 text-white hover:bg-blue-700 gap-2 font-mono uppercase text-xs tracking-wider shadow-lg shadow-blue-500/10"
           >
             <Plus className="w-4 h-4" />
             Add Vendor
@@ -585,6 +591,7 @@ function Dashboard() {
                   />
                 </div>
                 <Button
+                  aria-label="Refresh vendors"
                   onClick={() => queryClient.invalidateQueries({ queryKey: ["vendors"] })}
                   variant="outline"
                   size="icon"
@@ -595,7 +602,11 @@ function Dashboard() {
               </div>
             </div>
 
-            <div className="overflow-x-auto max-h-[500px] overflow-y-auto" ref={parentRef}>
+            <div
+              tabIndex={0}
+              className="overflow-x-auto max-h-[500px] overflow-y-auto focus:outline-none focus:ring-1 focus:ring-blue-500/50"
+              ref={parentRef}
+            >
               <table data-testid="vendor-table" className="w-full text-left border-collapse">
                 <thead className="sticky top-0 bg-surface-container z-10 shadow-sm">
                   <tr className="border-b border-outline-variant text-on-surface-variant font-mono text-[10px] uppercase tracking-wider">
@@ -760,7 +771,10 @@ function Dashboard() {
               </span>
             </div>
 
-            <div className="space-y-3 max-h-[260px] overflow-y-auto pr-1">
+            <div
+              tabIndex={0}
+              className="space-y-3 max-h-[260px] overflow-y-auto pr-1 focus:outline-none focus:ring-1 focus:ring-blue-500/50 rounded"
+            >
               {alerts.length === 0 ? (
                 <div className="text-center text-xs text-on-surface-variant py-8">
                   No active threat signals detected.
@@ -828,7 +842,7 @@ function Dashboard() {
                 Threat Scan
               </Button>
               <Button
-                onClick={() => toast.success("Executive PDF report generated successfully.")}
+                onClick={handleExportCSV}
                 className="bg-background border border-outline-variant hover:bg-surface-container text-white flex flex-col items-center justify-center py-6 h-auto text-xs gap-1.5 rounded-lg transition-all font-mono uppercase"
               >
                 <Download className="w-4 h-4 text-green-400" />
@@ -890,6 +904,7 @@ function Dashboard() {
               </DialogHeader>
               <button
                 type="button"
+                aria-label="Close"
                 onClick={() => setIsAddModalOpen(false)}
                 className="text-on-surface-variant hover:text-white w-8 h-8 rounded-lg flex items-center justify-center hover:bg-outline-variant transition-all"
               >
@@ -951,7 +966,10 @@ function Dashboard() {
                 <label className="text-xs font-mono uppercase text-on-surface-variant font-semibold">
                   Metadata Tags
                 </label>
-                <div className="flex flex-wrap gap-2 p-3 bg-background border border-outline-variant rounded-md max-h-[96px] overflow-y-auto">
+                <div
+                  tabIndex={0}
+                  className="flex flex-wrap gap-2 p-3 bg-background border border-outline-variant rounded-md max-h-[96px] overflow-y-auto focus:outline-none focus:ring-1 focus:ring-blue-500/50"
+                >
                   {availableTags.map((tag) => {
                     const isSelected = vendorTags.includes(tag);
                     return (

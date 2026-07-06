@@ -1,4 +1,5 @@
 import React from "react";
+import { ShieldAlert } from "lucide-react";
 import { useVendorAttck } from "../hooks/useVendorIntelligence";
 import { DataModule } from "@/components/DataModule";
 
@@ -23,7 +24,7 @@ export const AttckMatrix = ({
   return (
     <DataModule
       title="MITRE ATT&CK Intelligence"
-      icon="warning"
+      icon={<ShieldAlert className="w-5 h-5" />}
       status={status}
       onRetry={() => refetch()}
       skeletonType="matrix"

@@ -1,4 +1,5 @@
 import React from "react";
+import { Shield } from "lucide-react";
 import { useVendorThreatFeeds } from "../hooks/useVendorIntelligence";
 import { DataModule } from "@/components/DataModule";
 
@@ -22,7 +23,7 @@ export const ThreatFeedsCard = ({
   return (
     <DataModule
       title="Threat Feeds"
-      icon="security"
+      icon={<Shield className="w-5 h-5" />}
       status={status}
       onRetry={() => refetch()}
       skeletonType="list"

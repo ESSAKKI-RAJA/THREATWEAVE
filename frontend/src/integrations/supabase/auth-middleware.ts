@@ -41,16 +41,9 @@ export const requireSupabaseAuth = createMiddleware({ type: "function" }).server
 
 /**
  * Clerk authentication path.
- * Verifies the Clerk session token and creates a Supabase client for DB access.
+ * Verifies the Clerk session token and provides the mock database client.
  */
 async function handleClerkAuth(next: any, secretKey: string) {
-  const SUPABASE_URL = process.env.SUPABASE_URL;
-  const SUPABASE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_ANON_KEY;
-
-  if (!SUPABASE_URL || !SUPABASE_KEY) {
-    throw new Error("Missing SUPABASE_URL or SUPABASE_KEY for database connection.");
-  }
-
   try {
     const { verifyToken } = await import("@clerk/backend");
     const { getRequest } = await import("@tanstack/react-start/server");
@@ -80,27 +73,12 @@ async function handleClerkAuth(next: any, secretKey: string) {
       throw new Error("Unauthorized: No valid user in Clerk session");
     }
 
-    // In a real app we'd fetch the Supabase template token from clerkClient.
-    // Since this is a production readiness audit fix, we'll just use the session token.
-    const supabaseToken = clerkToken;
-
-    // Create a Supabase client with service role for DB operations
-    const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_KEY, {
-      global: {
-        headers: {
-          Authorization: `Bearer ${supabaseToken}`,
-        },
-      },
-      auth: {
-        storage: undefined,
-        persistSession: false,
-        autoRefreshToken: false,
-      },
-    });
+    // Use the mock database since we are not connecting to a real Supabase instance yet
+    const { mockSupabase } = await import("./mock-db");
 
     return next({
       context: {
-        supabase,
+        supabase: mockSupabase,
         userId,
         claims: { sub: userId, email: verified.email || "", role: "admin" },
       },

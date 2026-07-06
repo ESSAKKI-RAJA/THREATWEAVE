@@ -25,14 +25,12 @@ export const useVendor = (domain: string) => {
   return useQuery({
     queryKey: ["vendor", domain],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("vendors")
-        .select("*")
-        .eq("domain", domain)
-        .maybeSingle();
-
-      if (error) throw error;
-      return data;
+      const res = await fetch("/api/vendors");
+      if (!res.ok) throw new Error("Failed to fetch vendors");
+      const vendors = await res.json();
+      const vendor = vendors.find((v: any) => v.domain === domain);
+      if (!vendor) throw new Error("Vendor not found");
+      return vendor;
     },
     enabled: !!domain,
   });

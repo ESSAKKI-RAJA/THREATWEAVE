@@ -96,7 +96,7 @@ export default {
           "worker-src 'self' blob:",
           "style-src 'self' 'unsafe-inline'",
           "img-src 'self' data: https://img.clerk.com https://*.clerk.accounts.dev",
-          "connect-src 'self' https://*.clerk.accounts.dev wss:",
+          "connect-src 'self' https://*.clerk.accounts.dev wss: https://*.supabase.co",
           "frame-src 'self' https://*.clerk.accounts.dev",
           "font-src 'self' data:",
         ].join("; ") + ";",

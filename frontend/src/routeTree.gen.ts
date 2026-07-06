@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AuthenticatedThreatsRouteImport } from './routes/_authenticated/threats'
 import { Route as AuthenticatedSupplyChainRouteImport } from './routes/_authenticated/supply-chain'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedInvestigationsRouteImport } from './routes/_authenticated/investigations'
 import { Route as AuthenticatedIntelligenceRouteImport } from './routes/_authenticated/intelligence'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -51,6 +52,11 @@ const AuthenticatedSupplyChainRoute =
     path: '/supply-chain',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedInvestigationsRoute =
   AuthenticatedInvestigationsRouteImport.update({
     id: '/investigations',
@@ -87,6 +93,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/intelligence': typeof AuthenticatedIntelligenceRoute
   '/investigations': typeof AuthenticatedInvestigationsRoute
+  '/settings': typeof AuthenticatedSettingsRoute
   '/supply-chain': typeof AuthenticatedSupplyChainRoute
   '/threats': typeof AuthenticatedThreatsRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -99,6 +106,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/intelligence': typeof AuthenticatedIntelligenceRoute
   '/investigations': typeof AuthenticatedInvestigationsRoute
+  '/settings': typeof AuthenticatedSettingsRoute
   '/supply-chain': typeof AuthenticatedSupplyChainRoute
   '/threats': typeof AuthenticatedThreatsRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -113,6 +121,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/intelligence': typeof AuthenticatedIntelligenceRoute
   '/_authenticated/investigations': typeof AuthenticatedInvestigationsRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/supply-chain': typeof AuthenticatedSupplyChainRoute
   '/_authenticated/threats': typeof AuthenticatedThreatsRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -127,6 +136,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/intelligence'
     | '/investigations'
+    | '/settings'
     | '/supply-chain'
     | '/threats'
     | '/auth/callback'
@@ -139,6 +149,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/intelligence'
     | '/investigations'
+    | '/settings'
     | '/supply-chain'
     | '/threats'
     | '/auth/callback'
@@ -152,6 +163,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/intelligence'
     | '/_authenticated/investigations'
+    | '/_authenticated/settings'
     | '/_authenticated/supply-chain'
     | '/_authenticated/threats'
     | '/auth/callback'
@@ -209,6 +221,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSupplyChainRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/investigations': {
       id: '/_authenticated/investigations'
       path: '/investigations'
@@ -252,6 +271,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedIntelligenceRoute: typeof AuthenticatedIntelligenceRoute
   AuthenticatedInvestigationsRoute: typeof AuthenticatedInvestigationsRoute
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedSupplyChainRoute: typeof AuthenticatedSupplyChainRoute
   AuthenticatedThreatsRoute: typeof AuthenticatedThreatsRoute
   AuthenticatedVendorsDomainRoute: typeof AuthenticatedVendorsDomainRoute
@@ -262,6 +282,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedIntelligenceRoute: AuthenticatedIntelligenceRoute,
   AuthenticatedInvestigationsRoute: AuthenticatedInvestigationsRoute,
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedSupplyChainRoute: AuthenticatedSupplyChainRoute,
   AuthenticatedThreatsRoute: AuthenticatedThreatsRoute,
   AuthenticatedVendorsDomainRoute: AuthenticatedVendorsDomainRoute,

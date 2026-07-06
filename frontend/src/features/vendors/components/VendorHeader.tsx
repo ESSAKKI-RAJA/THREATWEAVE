@@ -1,5 +1,16 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import {
+  ArrowLeft,
+  RefreshCw,
+  Crosshair,
+  Sparkles,
+  Download,
+  FileText,
+  FileSpreadsheet,
+  FileJson,
+  Trash2,
+} from "lucide-react";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -73,7 +84,7 @@ export const VendorHeader = ({ vendor, scan, domain }: VendorHeaderProps) => {
           to="/dashboard"
           className="text-sm font-label-md uppercase tracking-wider text-on-surface-variant hover:text-on-surface transition-colors inline-flex items-center mb-4 gap-2"
         >
-          <span className="material-symbols-outlined text-sm">arrow_back</span>
+          <ArrowLeft className="w-4 h-4" />
           Back to Intelligence Dashboard
         </Link>
         <div className="flex items-center gap-4 mt-1">
@@ -92,9 +103,9 @@ export const VendorHeader = ({ vendor, scan, domain }: VendorHeaderProps) => {
           className="bg-surface-variant text-on-surface-variant font-label-md text-label-md uppercase px-4 py-2 border border-outline-variant hover:bg-surface hover:text-on-surface transition-colors flex items-center gap-2 disabled:opacity-50"
         >
           {busy === "scan" ? (
-            <span className="material-symbols-outlined text-sm animate-spin">refresh</span>
+            <RefreshCw className="w-4 h-4 animate-spin" />
           ) : (
-            <span className="material-symbols-outlined text-sm">refresh</span>
+            <RefreshCw className="w-4 h-4" />
           )}
           Refresh Intelligence
         </button>
@@ -104,9 +115,9 @@ export const VendorHeader = ({ vendor, scan, domain }: VendorHeaderProps) => {
           className="bg-surface-variant text-on-surface-variant font-label-md text-label-md uppercase px-4 py-2 border border-outline-variant hover:bg-surface hover:text-on-surface transition-colors flex items-center gap-2 disabled:opacity-50"
         >
           {busy === "match" ? (
-            <span className="material-symbols-outlined text-sm animate-spin">sync</span>
+            <RefreshCw className="w-4 h-4 animate-spin" />
           ) : (
-            <span className="material-symbols-outlined text-sm">my_location</span>
+            <Crosshair className="w-4 h-4" />
           )}
           Run Threat Match
         </button>
@@ -116,9 +127,9 @@ export const VendorHeader = ({ vendor, scan, domain }: VendorHeaderProps) => {
           className="bg-primary text-on-primary font-label-md text-label-md uppercase px-4 py-2 hover:bg-surface-tint transition-colors flex items-center gap-2 disabled:opacity-50"
         >
           {busy === "ai" ? (
-            <span className="material-symbols-outlined text-sm animate-spin">sync</span>
+            <RefreshCw className="w-4 h-4 animate-spin" />
           ) : (
-            <span className="material-symbols-outlined text-sm">auto_awesome</span>
+            <Sparkles className="w-4 h-4" />
           )}
           Synthesize Report
         </button>
@@ -126,7 +137,7 @@ export const VendorHeader = ({ vendor, scan, domain }: VendorHeaderProps) => {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="bg-surface-variant text-on-surface-variant font-label-md text-label-md uppercase px-4 py-2 border border-outline-variant hover:bg-surface hover:text-on-surface transition-colors flex items-center gap-2 disabled:opacity-50">
-              <span className="material-symbols-outlined text-sm">download</span>
+              <Download className="w-4 h-4" />
               Export Data
             </button>
           </DropdownMenuTrigger>
@@ -138,8 +149,7 @@ export const VendorHeader = ({ vendor, scan, domain }: VendorHeaderProps) => {
               onClick={exportPDF}
               className="hover:bg-surface-variant cursor-pointer"
             >
-              <span className="material-symbols-outlined text-sm mr-2">print</span> PDF Report
-              (Print)
+              <FileText className="w-4 h-4 mr-2" /> PDF Report (Print)
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
@@ -147,7 +157,7 @@ export const VendorHeader = ({ vendor, scan, domain }: VendorHeaderProps) => {
               }}
               className="hover:bg-surface-variant cursor-pointer"
             >
-              <span className="material-symbols-outlined text-sm mr-2">csv</span> CSV Metrics
+              <FileSpreadsheet className="w-4 h-4 mr-2" /> CSV Metrics
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
@@ -155,14 +165,13 @@ export const VendorHeader = ({ vendor, scan, domain }: VendorHeaderProps) => {
               }}
               className="hover:bg-surface-variant cursor-pointer"
             >
-              <span className="material-symbols-outlined text-sm mr-2">data_object</span> Raw OSINT
-              JSON
+              <FileJson className="w-4 h-4 mr-2" /> Raw OSINT JSON
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={onDelete}
               className="text-error focus:text-error hover:bg-error-container hover:text-on-error-container cursor-pointer"
             >
-              <span className="material-symbols-outlined text-sm mr-2">delete</span> Delete Vendor
+              <Trash2 className="w-4 h-4 mr-2" /> Delete Vendor
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

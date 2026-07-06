@@ -4,7 +4,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export const getVendorRiskDetails = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .validator(z.object({ vendorId: z.string().uuid() }))
+  .validator(z.object({ vendorId: z.string() }))
   .handler(async ({ data, context }) => {
     const { supabase } = context as any;
 
@@ -18,7 +18,7 @@ export const getVendorRiskDetails = createServerFn({ method: "GET" })
 
 export const getSupplyChainRisk = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .validator(z.object({ vendorId: z.string().uuid() }))
+  .validator(z.object({ vendorId: z.string() }))
   .handler(async ({ data, context }) => {
     const { supabase } = context as any;
 
@@ -54,7 +54,7 @@ export const getSupplyChainRisk = createServerFn({ method: "GET" })
 
 export const getVendorAttck = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .validator(z.object({ vendorId: z.string().uuid() }))
+  .validator(z.object({ vendorId: z.string() }))
   .handler(async ({ data, context }) => {
     const { supabase } = context as any;
 
@@ -108,7 +108,7 @@ export const getForecast = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator(
     z.object({
-      vendorId: z.string().uuid(),
+      vendorId: z.string(),
       periods: z.number().optional().default(30),
       model: z.enum(["arima", "prophet", "lstm"]).optional().default("arima"),
     }),
@@ -130,7 +130,7 @@ export const getForecast = createServerFn({ method: "POST" })
 
 export const getVendorThreatFeeds = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .validator(z.object({ vendorId: z.string().uuid() }))
+  .validator(z.object({ vendorId: z.string() }))
   .handler(async ({ data, context }) => {
     const { supabase } = context as any;
 

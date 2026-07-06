@@ -6,10 +6,11 @@ import { supabase } from "./client";
 // the browser never attaches the bearer token to serverFn RPCs.
 export const attachSupabaseAuth = createMiddleware({ type: "function" }).client(
   async ({ next }) => {
-    const { data } = await supabase.auth.getSession();
-    const token = data.session?.access_token;
+    // THREATWEAVE Enterprise: We now use Clerk for authentication.
+    // The browser automatically attaches the `__session` cookie to server function requests.
+    // We no longer call `supabase.auth.getSession()` as it interferes with Clerk.
     return next({
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      headers: {},
     });
   },
 );

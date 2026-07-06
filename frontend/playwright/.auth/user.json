@@ -1,0 +1,35 @@
+{
+  "cookies": [
+    {
+      "name": "__cf_bm",
+      "value": "LGCwQbxIkxKMOqUqnyrBEcAvB0cXLDid4fv1quMfG0o-1783274634-1.0.1.1-nAufPGyzWecPaloLOeZXtPfn6nExdpiDNuebnW27JtJi45MTQ0GYUAC5bTjdBsND0yiBqGNkgfuM2yrefbSucxCyban1EBn1BK1bR0lOgCo",
+      "domain": ".distinct-egret-98.clerk.accounts.dev",
+      "path": "/",
+      "expires": 1783276921.381978,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_cfuvid",
+      "value": "AlKubqTl0LlecsNrRFs95i_jVTtdH_87L9J40HBtnOo-1783274634745-0.0.1.1-604800000",
+      "domain": ".distinct-egret-98.clerk.accounts.dev",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "__clerk_redirect_count",
+      "value": "3",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1783275123.831065,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": []
+}

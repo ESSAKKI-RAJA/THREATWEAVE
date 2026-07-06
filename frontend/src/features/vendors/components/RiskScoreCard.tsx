@@ -1,4 +1,5 @@
 import React from "react";
+import { AlertTriangle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useVendorRiskDetails } from "../hooks/useVendorIntelligence";
 import { DataModule } from "@/components/DataModule";
@@ -24,7 +25,7 @@ export const RiskScoreCard = ({
   return (
     <DataModule
       title="Risk Details"
-      icon="warning"
+      icon={<AlertTriangle className="w-5 h-5" />}
       status={status}
       onRetry={() => refetch()}
       skeletonType="list"

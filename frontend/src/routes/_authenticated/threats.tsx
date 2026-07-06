@@ -271,7 +271,10 @@ function ThreatsPage() {
                 </div>
               ))}
             </div>
-            <Button className="w-full mt-4 bg-background border border-outline-variant hover:bg-surface-container text-xs font-mono text-white">
+            <Button
+              onClick={() => (window.location.href = "/settings")}
+              className="w-full mt-4 bg-background border border-outline-variant hover:bg-surface-container text-xs font-mono text-white"
+            >
               Manage Feeds
             </Button>
           </div>
@@ -302,7 +305,10 @@ function ThreatsPage() {
                 </div>
               ))}
             </div>
-            <Button className="w-full mt-4 bg-primary text-primary-foreground text-xs font-mono">
+            <Button
+              onClick={() => window.open("https://attack.mitre.org/", "_blank")}
+              className="w-full mt-4 bg-primary text-primary-foreground text-xs font-mono"
+            >
               Open Interactive Matrix
             </Button>
           </div>

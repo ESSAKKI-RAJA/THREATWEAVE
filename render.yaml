@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: threatweave-backend
+    env: python
+    buildCommand: cd backend && pip install -r requirements.txt
+    startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: DATABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: NVD_API_KEY
+        sync: false
+      - key: ABUSEIPDB_API_KEY
+        sync: false
+      - key: GREYNOISE_API_KEY
+        sync: false
+      - key: OTX_API_KEY
+        sync: false
+
+  - type: web
+    name: threatweave-frontend
+    env: node
+    buildCommand: cd frontend && npm install && npm run build
+    startCommand: cd frontend && npm run preview
+    envVars:
+      - key: NODE_VERSION
+        value: 22.11.0
+      - key: VITE_API_URL
+        value: https://threatweave-backend.onrender.com
+      - key: VITE_CLERK_PUBLISHABLE_KEY
+        sync: false
+      - key: CLERK_SECRET_KEY
+        sync: false

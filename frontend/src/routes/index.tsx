@@ -1,10 +1,15 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "@clerk/tanstack-react-start";
 import { Button } from "@/components/ui/button";
 import { ShieldAlert, Activity, Network, FileSearch } from "lucide-react";
 
 export const Route = createFileRoute("/")({
+  beforeLoad: () => {
+    if (import.meta.env.VITE_BYPASS_AUTH === "true") {
+      throw redirect({ to: "/dashboard" });
+    }
+  },
   head: () => ({
     meta: [
       { title: "THREATWEAVE — Supply Chain Cyber Risk Intelligence" },
@@ -28,11 +33,13 @@ export const Route = createFileRoute("/")({
 function Landing() {
   const navigate = useNavigate();
   const { isSignedIn, isLoaded } = useAuth();
+  const isBypass = import.meta.env.VITE_BYPASS_AUTH === "true";
+
   useEffect(() => {
-    if (isLoaded && isSignedIn) {
+    if (isBypass || (isLoaded && isSignedIn)) {
       navigate({ to: "/dashboard" });
     }
-  }, [navigate, isLoaded, isSignedIn]);
+  }, [navigate, isLoaded, isSignedIn, isBypass]);
 
   const destRoute = "/login";
 

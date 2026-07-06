@@ -4,7 +4,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export const getVendorRiskDetails = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .validator(z.object({ vendorId: z.string().uuid() }))
+  .validator(z.object({ vendorId: z.string() }))
   .handler(async ({ data, context }) => {
     const { supabase } = context as any;
 
@@ -18,7 +18,7 @@ export const getVendorRiskDetails = createServerFn({ method: "GET" })
 
 export const getSupplyChainRisk = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .validator(z.object({ vendorId: z.string().uuid() }))
+  .validator(z.object({ vendorId: z.string() }))
   .handler(async ({ data, context }) => {
     const { supabase } = context as any;
 
@@ -43,7 +43,7 @@ export const getSupplyChainRisk = createServerFn({ method: "GET" })
 
 export const getVendorAttck = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .validator(z.object({ vendorId: z.string().uuid() }))
+  .validator(z.object({ vendorId: z.string() }))
   .handler(async ({ data, context }) => {
     const { supabase } = context as any;
     // For now we just return an empty array if joining across vulnerabilities to attck is too complex for this demo

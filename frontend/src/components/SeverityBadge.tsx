@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { AlertTriangle, Info, CheckCircle2 } from "lucide-react";
 
 export type Severity = "critical" | "high" | "medium" | "low" | "baseline";
 
@@ -30,12 +31,12 @@ export function SeverityBadge({ severity, label, className, showIcon = true }: S
     switch (severity) {
       case "critical":
       case "high":
-        return "warning";
+        return <AlertTriangle className="w-3.5 h-3.5" />;
       case "medium":
       case "low":
-        return "info";
+        return <Info className="w-3.5 h-3.5" />;
       default:
-        return "check_circle";
+        return <CheckCircle2 className="w-3.5 h-3.5" />;
     }
   };
 
@@ -47,14 +48,7 @@ export function SeverityBadge({ severity, label, className, showIcon = true }: S
         className,
       )}
     >
-      {showIcon && (
-        <span
-          className="material-symbols-outlined"
-          style={{ fontSize: "14px", fontVariationSettings: "'FILL' 1" }}
-        >
-          {getIcon()}
-        </span>
-      )}
+      {showIcon && getIcon()}
       {label || severity.toUpperCase()}
     </span>
   );

@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Loader2 } from "lucide-react";
+import { Loader2, Radar, LineChart, AlertTriangle, Network } from "lucide-react";
 import { useVendor, useVendorScan } from "@/hooks/useVendors";
 import {
   useVendorRiskDetails,
@@ -86,9 +86,7 @@ function VendorDetail() {
           className="bg-surface-container-high border-b border-tertiary-container flex items-center px-margin-mobile md:px-margin-desktop py-2 gap-3 shrink-0 z-10 relative"
           role="alert"
         >
-          <span className="material-symbols-outlined text-tertiary-container animate-pulse">
-            radar
-          </span>
+          <Radar className="w-5 h-5 text-tertiary-container animate-pulse" />
           <p className="font-data-mono text-data-mono text-on-surface-variant flex-1 truncate">
             <strong className="text-tertiary-container">
               System Status: Awaiting Initial Scan
@@ -108,7 +106,7 @@ function VendorDetail() {
           {/* Overview Section */}
           <section className="space-y-6">
             <h2 className="text-xl font-bold font-display-lg text-on-surface flex items-center gap-2 border-b border-outline-variant pb-2">
-              <span className="material-symbols-outlined text-primary">monitoring</span>
+              <LineChart className="w-6 h-6 text-primary" />
               Overview
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-bento-gap">
@@ -124,7 +122,7 @@ function VendorDetail() {
           {/* Vulnerabilities Section */}
           <section className="space-y-6">
             <h2 className="text-xl font-bold font-display-lg text-on-surface flex items-center gap-2 border-b border-outline-variant pb-2">
-              <span className="material-symbols-outlined text-error">warning</span>
+              <AlertTriangle className="w-6 h-6 text-error" />
               Vulnerabilities
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-bento-gap">
@@ -145,7 +143,7 @@ function VendorDetail() {
           {/* Supply Chain Section */}
           <section className="space-y-6">
             <h2 className="text-xl font-bold font-display-lg text-on-surface flex items-center gap-2 border-b border-outline-variant pb-2">
-              <span className="material-symbols-outlined text-tertiary">share</span>
+              <Network className="w-6 h-6 text-tertiary" />
               Supply Chain
             </h2>
             <ErrorBoundary label="Supply Chain">

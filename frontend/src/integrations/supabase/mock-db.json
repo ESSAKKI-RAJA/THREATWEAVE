@@ -1,15 +1,6 @@
 {
   "vendors": [
     {
-      "id": "c5e2d6b3-e221-49aa-971c-34d3148a04b1",
-      "user_id": "demo-user",
-      "name": "acme-supplier.com",
-      "domain": "acme-supplier.com",
-      "risk_score": 0,
-      "created_at": "2026-06-21T18:00:00.000Z",
-      "updated_at": "2026-06-24T09:33:13.754Z"
-    },
-    {
       "id": "9aa057fe-fa52-42af-bdc1-755097a55c5c",
       "created_at": "2026-06-23T20:45:36.532Z",
       "updated_at": "2026-07-03T19:26:58.364Z",
@@ -24,44 +15,30 @@
     {
       "id": "31bf0afd-0df6-4e76-86b9-fabba6e51351",
       "created_at": "2026-06-27T04:29:24.810Z",
-      "updated_at": "2026-07-03T18:22:10.225Z",
+      "updated_at": "2026-07-05T14:22:43.058Z",
       "organization_id": "0a066a2a-4257-426d-89a4-d285f69d8520",
       "user_id": "demo-user",
       "name": "keinscbse.com",
       "domain": "keinscbse.com",
-      "risk_score": 0,
+      "risk_score": 31,
       "confidence_score": 68,
-      "last_successful_scan": "2026-07-03T18:22:10.223Z"
+      "last_successful_scan": "2026-07-05T14:22:43.058Z",
+      "status": "completed",
+      "scan_progress": 100
     },
     {
       "id": "4a105cad-1d8a-438d-ac03-a5a033df637e",
       "created_at": "2026-06-27T04:55:24.025Z",
-      "updated_at": "2026-06-27T14:34:28.647Z",
+      "updated_at": "2026-07-05T14:25:48.712Z",
       "organization_id": "0a066a2a-4257-426d-89a4-d285f69d8520",
       "user_id": "demo-user",
       "name": "kingsschools.in",
       "domain": "kingsschools.in",
-      "risk_score": 51,
+      "risk_score": 52,
       "confidence_score": 57,
-      "last_successful_scan": "2026-06-27T14:34:28.645Z"
-    },
-    {
-      "id": "globex-inc-id-2222",
-      "user_id": "demo-user",
-      "name": "Globex Inc.",
-      "domain": "globex.com",
-      "sector": "Finance",
-      "tags": [
-        "Core",
-        "Critical"
-      ],
-      "description": "Primary financial transaction processor",
-      "risk_score": 45,
+      "last_successful_scan": "2026-07-05T14:25:48.712Z",
       "status": "completed",
-      "scan_progress": 100,
-      "last_successful_scan": "2026-06-28T05:23:30.054Z",
-      "created_at": "2026-06-26T06:23:30.054Z",
-      "updated_at": "2026-06-28T05:23:30.054Z"
+      "scan_progress": 100
     },
     {
       "id": "initech-id-4444",
@@ -74,29 +51,12 @@
         "Legacy"
       ],
       "description": "External bug tracking infrastructure",
-      "risk_score": 44,
-      "status": "completed",
+      "risk_score": 58,
+      "status": "failed",
       "scan_progress": 100,
-      "last_successful_scan": "2026-07-03T17:02:03.575Z",
-      "created_at": "2026-06-18T06:23:30.054Z",
-      "updated_at": "2026-07-03T17:02:03.575Z"
-    },
-    {
-      "id": "soylent-corp-id-3333",
-      "user_id": "demo-user",
-      "name": "Soylent Corp.",
-      "domain": "soylent.com",
-      "sector": "Healthcare",
-      "tags": [
-        "Non-Core"
-      ],
-      "description": "Staff wellness program provider",
-      "risk_score": 23,
-      "status": "completed",
-      "scan_progress": 100,
-      "last_successful_scan": "2026-07-03T17:04:14.973Z",
-      "created_at": "2026-06-28T20:04:14.973Z",
-      "updated_at": "2026-07-03T17:04:14.973Z"
+      "last_successful_scan": "2026-07-05T16:03:38.464Z",
+      "created_at": "2026-06-25T16:13:38.464Z",
+      "updated_at": "2026-07-05T16:03:38.464Z"
     },
     {
       "id": "umbrella-corp-id-5555",
@@ -112,9 +72,26 @@
       "risk_score": 65,
       "status": "queued",
       "scan_progress": 0,
-      "last_successful_scan": "2026-07-03T19:59:43.767Z",
-      "created_at": "2026-06-18T20:04:43.767Z",
-      "updated_at": "2026-07-03T20:04:43.767Z"
+      "last_successful_scan": "2026-07-05T16:08:38.464Z",
+      "created_at": "2026-06-20T16:13:38.464Z",
+      "updated_at": "2026-07-05T16:13:38.464Z"
+    },
+    {
+      "id": "soylent-corp-id-3333",
+      "user_id": "demo-user",
+      "name": "Soylent Corp.",
+      "domain": "soylent.com",
+      "sector": "Healthcare",
+      "tags": [
+        "Non-Core"
+      ],
+      "description": "Staff wellness program provider",
+      "risk_score": 23,
+      "status": "completed",
+      "scan_progress": 100,
+      "last_successful_scan": "2026-07-05T13:53:59.101Z",
+      "created_at": "2026-06-30T16:53:59.101Z",
+      "updated_at": "2026-07-05T13:53:59.101Z"
     },
     {
       "id": "acme-corp-id-1111",
@@ -131,9 +108,9 @@
       "risk_score": 72,
       "status": "scanning",
       "scan_progress": 42,
-      "last_successful_scan": "2026-07-03T20:02:53.932Z",
-      "created_at": "2026-07-02T20:04:53.932Z",
-      "updated_at": "2026-07-03T20:04:53.932Z"
+      "last_successful_scan": "2026-07-05T17:56:09.676Z",
+      "created_at": "2026-07-04T17:58:09.677Z",
+      "updated_at": "2026-07-05T17:58:09.677Z"
     }
   ],
   "scans": [
@@ -5505,6 +5482,64 @@
           "issuer_name": "Let's Encrypt"
         }
       ]
+    },
+    {
+      "id": "04aa7057-37b2-4538-9ccd-5294ba3f7d2c",
+      "vendor_id": "31bf0afd-0df6-4e76-86b9-fabba6e51351",
+      "user_id": "demo-user",
+      "scan_date": "2026-07-05T14:22:43.060Z",
+      "risk_score": 31,
+      "confidence": 68,
+      "created_at": "2026-07-05T14:22:43.060Z",
+      "shodan_data": {
+        "ports": [
+          80,
+          443,
+          22,
+          8080
+        ],
+        "vulns": [
+          "CVE-2023-3824",
+          "CVE-2024-21626"
+        ]
+      },
+      "virustotal_data": {
+        "reputation": 4
+      },
+      "crt_sh_data": [
+        {
+          "issuer_name": "Let's Encrypt"
+        }
+      ]
+    },
+    {
+      "id": "38cbf75e-a2f1-455f-a023-36c48ad0a8c1",
+      "vendor_id": "4a105cad-1d8a-438d-ac03-a5a033df637e",
+      "user_id": "demo-user",
+      "scan_date": "2026-07-05T14:25:48.712Z",
+      "risk_score": 52,
+      "confidence": 75,
+      "created_at": "2026-07-05T14:25:48.712Z",
+      "shodan_data": {
+        "ports": [
+          80,
+          443,
+          22,
+          8080
+        ],
+        "vulns": [
+          "CVE-2023-3824",
+          "CVE-2024-21626"
+        ]
+      },
+      "virustotal_data": {
+        "reputation": 3
+      },
+      "crt_sh_data": [
+        {
+          "issuer_name": "Let's Encrypt"
+        }
+      ]
     }
   ],
   "threat_signatures": [
@@ -6561,6 +6596,324 @@
       "vendor_id": "acme-corp-id-1111",
       "user_id": "demo-user",
       "timestamp": "2026-07-03T20:04:53.915Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "acme-corp-id-1111",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-04T18:39:38.290Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "umbrella-corp-id-5555",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-04T18:43:57.089Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "soylent-corp-id-3333",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-04T18:44:43.832Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "initech-id-4444",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-04T18:44:51.914Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "initech-id-4444",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-04T19:33:13.107Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "acme-corp-id-1111",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-04T19:39:28.953Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "acme-corp-id-1111",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-04T19:50:22.579Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "soylent-corp-id-3333",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-04T19:51:30.587Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "initech-id-4444",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-04T19:52:59.062Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "globex-inc-id-2222",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-04T19:53:10.202Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "acme-corp-id-1111",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T14:15:22.550Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "acme-corp-id-1111",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T14:25:16.715Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "soylent-corp-id-3333",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T14:25:24.132Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "initech-id-4444",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T14:25:35.834Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "acme-corp-id-1111",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T14:50:14.849Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "globex-inc-id-2222",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T14:55:26.564Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "globex-inc-id-2222",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T14:59:18.315Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "globex-inc-id-2222",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T15:00:30.421Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "globex-inc-id-2222",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T15:01:49.325Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "globex-inc-id-2222",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T15:02:47.502Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "globex-inc-id-2222",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T15:05:19.086Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "soylent-corp-id-3333",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T15:05:21.891Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "globex-inc-id-2222",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T15:06:08.449Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "soylent-corp-id-3333",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T15:06:10.846Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "globex-inc-id-2222",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T15:07:41.718Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "soylent-corp-id-3333",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T15:07:44.377Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "globex-inc-id-2222",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T15:08:52.367Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "soylent-corp-id-3333",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T15:08:55.170Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "globex-inc-id-2222",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T15:10:06.879Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "soylent-corp-id-3333",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T15:10:08.961Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "globex-inc-id-2222",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T15:11:34.258Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "soylent-corp-id-3333",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T15:11:37.551Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "globex-inc-id-2222",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T15:35:55.211Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "soylent-corp-id-3333",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T15:35:55.795Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "globex-inc-id-2222",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T15:53:06.663Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "soylent-corp-id-3333",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T15:53:11.451Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "acme-corp-id-1111",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T16:05:18.656Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "soylent-corp-id-3333",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T16:05:26.160Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "globex-inc-id-2222",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T16:05:34.250Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "initech-id-4444",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T16:07:19.747Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "umbrella-corp-id-5555",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T16:07:27.922Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "c5e2d6b3-e221-49aa-971c-34d3148a04b1",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T16:07:50.406Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "globex-inc-id-2222",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T16:13:41.167Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "soylent-corp-id-3333",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T16:13:45.374Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "globex-inc-id-2222",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T16:15:53.526Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "soylent-corp-id-3333",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T16:15:57.514Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "soylent-corp-id-3333",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T16:19:55.986Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "globex-inc-id-2222",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T16:28:41.861Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "soylent-corp-id-3333",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T16:28:45.897Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "globex-inc-id-2222",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T16:48:52.798Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "soylent-corp-id-3333",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T16:48:55.855Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "acme-corp-id-1111",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T16:56:38.524Z"
+    },
+    {
+      "type": "delete",
+      "vendor_id": "globex-inc-id-2222",
+      "user_id": "demo-user",
+      "timestamp": "2026-07-05T18:12:15.775Z"
     }
   ]
 }

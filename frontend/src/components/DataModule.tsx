@@ -1,10 +1,11 @@
 import { cn } from "@/lib/utils";
 import React from "react";
 import { SkeletonViz } from "./SkeletonViz";
+import { AlertCircle, RefreshCw, Loader2, AlertTriangle } from "lucide-react";
 
 interface DataModuleProps {
   title: string;
-  icon: string;
+  icon: React.ReactNode;
   status: "cold-start" | "error" | "populated";
   errorReason?: string;
   onRetry?: () => void;
@@ -58,11 +59,8 @@ export function DataModule({
 
   const renderError = () => (
     <div className="p-6 ml-1 flex-1 flex flex-col items-center justify-center text-center gap-4 min-h-[250px]">
-      {/* Amber icon, explicitly NOT a triangle/circle to avoid severity confusion */}
       <div className="w-12 h-12 rounded bg-tertiary-container/10 flex items-center justify-center mb-2">
-        <span className="material-symbols-outlined text-tertiary-container text-3xl">
-          sync_problem
-        </span>
+        <AlertTriangle className="w-8 h-8 text-tertiary-container" />
       </div>
       <div className="flex flex-col gap-1">
         <h3 className="font-headline-sm text-headline-sm text-on-surface">Data Unavailable</h3>
@@ -75,7 +73,7 @@ export function DataModule({
           onClick={onRetry}
           className="mt-2 bg-surface-variant hover:bg-surface text-on-surface-variant hover:text-on-surface border border-outline-variant px-4 py-2 rounded-sm font-label-md text-label-md uppercase tracking-wider transition-colors flex items-center gap-2"
         >
-          <span className="material-symbols-outlined text-sm">refresh</span>
+          <RefreshCw className="w-4 h-4" />
           Retry Module
         </button>
       )}
@@ -92,25 +90,15 @@ export function DataModule({
     >
       <header className="flex justify-between items-center px-4 py-3 border-b border-outline-variant bg-surface-container-high ml-1 z-10">
         <h2 className="font-headline-sm text-headline-sm text-on-surface-variant flex items-center gap-2 uppercase">
-          <span className="material-symbols-outlined">{icon}</span>
+          {icon}
           {title}
         </h2>
         {headerRight ? (
           headerRight
         ) : status === "cold-start" ? (
-          <span
-            className="material-symbols-outlined text-on-surface-variant animate-pulse"
-            style={{ fontSize: "16px" }}
-          >
-            pending
-          </span>
+          <Loader2 className="w-4 h-4 text-on-surface-variant animate-spin" />
         ) : status === "error" ? (
-          <span
-            className="material-symbols-outlined text-tertiary-container"
-            style={{ fontSize: "16px" }}
-          >
-            error
-          </span>
+          <AlertCircle className="w-4 h-4 text-tertiary-container" />
         ) : null}
       </header>
 

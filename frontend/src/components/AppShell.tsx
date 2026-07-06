@@ -1,6 +1,7 @@
-import { Outlet, useLocation, Navigate } from "@tanstack/react-router";
+import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { UserButton, useAuth } from "@clerk/tanstack-react-start";
 import React from "react";
+import { Menu } from "lucide-react";
 import { CommandPalette } from "./CommandPalette";
 import { Sidebar } from "./Sidebar";
 import { useUIStore } from "../store/uiStore";
@@ -29,10 +30,10 @@ export function AppShell() {
               THREATWEAVE
             </span>
             <button
-              className="md:hidden text-slate-400 hover:text-slate-100 transition-colors"
+              className="md:hidden p-2 text-on-surface-variant hover:text-white transition-colors"
               onClick={toggleSidebar}
             >
-              <span className="material-symbols-outlined text-2xl">menu</span>
+              <Menu className="w-6 h-6" />
             </button>
           </div>
           <div className="flex items-center gap-4">
@@ -62,10 +63,18 @@ export function AppShell() {
   );
 
   const { isSignedIn, isLoaded } = useAuth();
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    if (isLoaded && !isSignedIn && !isBypass) {
+      navigate({ to: "/login", replace: true });
+    }
+  }, [isLoaded, isSignedIn, isBypass, navigate]);
 
   if (!isLoaded) return null; // Or a loading spinner
 
   if (isBypass || isSignedIn) return content;
 
-  return <Navigate to="/login" />;
+  // We return null here while the useEffect navigates the user to /login
+  return null;
 }

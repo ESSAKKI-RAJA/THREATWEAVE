@@ -64,6 +64,16 @@ class MockQueryBuilder {
     return this;
   }
 
+  in(field: string, val: any[]) {
+    this.filters.push({ field, val, type: "in" });
+    return this;
+  }
+
+  not(field: string, operator: string, val: any) {
+    this.filters.push({ field, val: { operator, val }, type: "not" });
+    return this;
+  }
+
   order(field: string, options?: { ascending?: boolean }) {
     this.orderByField = field;
     this.orderByAscending = options?.ascending ?? true;

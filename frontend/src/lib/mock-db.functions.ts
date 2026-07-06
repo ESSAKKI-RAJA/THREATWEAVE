@@ -95,6 +95,17 @@ export const executeMockDbRequest = createServerFn({ method: "POST" })
               if (f.type === "lte") {
                 return row[f.field] <= f.val;
               }
+              if (f.type === "in") {
+                return Array.isArray(f.val) && f.val.includes(row[f.field]);
+              }
+              if (f.type === "not") {
+                const op = f.val?.operator;
+                const v = f.val?.val;
+                if (op === "is") {
+                  if (v === null) return row[f.field] !== null;
+                }
+                return row[f.field] !== v;
+              }
               return true;
             });
           });

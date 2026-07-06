@@ -139,11 +139,9 @@ export const generateNarrative = createServerFn({ method: "POST" })
     let narrative: NarrativePayload;
     let provider: "claude" | "lovable-ai" | "mock-brief";
 
-    const bypassAuth =
-      process.env.BYPASS_AUTH === "true" || process.env.VITE_BYPASS_AUTH === "true";
     const hasKeys = !!(process.env.LOVABLE_API_KEY || process.env.ANTHROPIC_API_KEY);
 
-    if (bypassAuth && !hasKeys) {
+    if (!hasKeys) {
       // Build a detailed mockup matching the complete v1-v3 specification payload
       narrative = {
         executive_summary: `The threat intelligence briefing for ${domain} reveals a moderately complex external attack surface footprint. Standard web assets are online, but port mapping indicates database and administrative protocols are public-facing, exposing critical corporate data. Direct mitigation is recommended within the standard SLA period.`,

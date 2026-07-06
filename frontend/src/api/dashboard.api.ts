@@ -19,8 +19,11 @@ export function writeMockDb(db: any) {
   fs.writeFileSync(MOCK_DB_PATH, JSON.stringify(db, null, 2), "utf-8");
 }
 
-// Ensure the 5 dashboard mockup vendors exist in the mock database
+let hasSeeded = false;
+
 export function seedMockupVendors() {
+  if (hasSeeded) return;
+  hasSeeded = true;
   try {
     const db = readMockDb();
     const mockupVendors = [

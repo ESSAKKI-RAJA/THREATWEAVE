@@ -10,11 +10,6 @@ function LoginComponent() {
     <div className="min-h-screen flex items-center justify-center bg-slate-950 p-4">
       <div className="w-full max-w-md">
         <div className="flex flex-col items-center mb-8">
-          <div className="w-12 h-12 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center shadow-lg mb-4">
-            <span className="material-symbols-outlined text-teal-500 text-2xl font-bold">
-              security
-            </span>
-          </div>
           <h1 className="text-2xl font-bold text-slate-100 uppercase tracking-widest">
             THREATWEAVE
           </h1>

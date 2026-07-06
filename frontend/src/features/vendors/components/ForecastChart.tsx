@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useForecast } from "../hooks/useVendorIntelligence";
+import { TrendingUp } from "lucide-react";
 import {
   ResponsiveContainer,
   Line,
@@ -42,7 +43,7 @@ export const ForecastChart = ({
   return (
     <DataModule
       title="30-Day Risk Forecast"
-      icon="trending_up"
+      icon={<TrendingUp className="w-5 h-5" />}
       status={status}
       onRetry={() => refetch()}
       skeletonType="chart"

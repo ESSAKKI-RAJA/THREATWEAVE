@@ -248,12 +248,10 @@ export const matchThreats = createServerFn({ method: "POST" })
 
     const fingerprintText = generateFingerprintText(fp);
 
-    const bypassAuth =
-      process.env.BYPASS_AUTH === "true" || process.env.VITE_BYPASS_AUTH === "true";
     const hasKey = !!process.env.LOVABLE_API_KEY;
 
     let vec: number[] = [];
-    if (!bypassAuth || hasKey) {
+    if (hasKey) {
       try {
         vec = await embed(fingerprintText);
       } catch (err) {
