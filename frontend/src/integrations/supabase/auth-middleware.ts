@@ -17,7 +17,8 @@ import type { Database } from "./types";
 export const requireSupabaseAuth = createMiddleware({ type: "function" }).server(
   async ({ next }) => {
     const bypassAuth =
-      process.env.BYPASS_AUTH === "true" || process.env.VITE_BYPASS_AUTH === "true";
+      process.env.NODE_ENV !== "production" &&
+      (process.env.BYPASS_AUTH === "true" || process.env.VITE_BYPASS_AUTH === "true");
 
     if (bypassAuth) {
       const { mockSupabase } = await import("./mock-db");

@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
@@ -16,12 +17,18 @@ import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AuthenticatedThreatsRouteImport } from './routes/_authenticated/threats'
 import { Route as AuthenticatedSupplyChainRouteImport } from './routes/_authenticated/supply-chain'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedInvestigationsRouteImport } from './routes/_authenticated/investigations'
 import { Route as AuthenticatedIntelligenceRouteImport } from './routes/_authenticated/intelligence'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAlertsRouteImport } from './routes/_authenticated/alerts'
 import { Route as AuthenticatedVendorsDomainRouteImport } from './routes/_authenticated/vendors.$domain'
 
+const SignUpRoute = SignUpRouteImport.update({
+  id: '/sign-up',
+  path: '/sign-up',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -57,6 +64,11 @@ const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedInvestigationsRoute =
   AuthenticatedInvestigationsRouteImport.update({
     id: '/investigations',
@@ -89,10 +101,12 @@ const AuthenticatedVendorsDomainRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/sign-up': typeof SignUpRoute
   '/alerts': typeof AuthenticatedAlertsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/intelligence': typeof AuthenticatedIntelligenceRoute
   '/investigations': typeof AuthenticatedInvestigationsRoute
+  '/onboarding': typeof AuthenticatedOnboardingRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/supply-chain': typeof AuthenticatedSupplyChainRoute
   '/threats': typeof AuthenticatedThreatsRoute
@@ -102,10 +116,12 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/sign-up': typeof SignUpRoute
   '/alerts': typeof AuthenticatedAlertsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/intelligence': typeof AuthenticatedIntelligenceRoute
   '/investigations': typeof AuthenticatedInvestigationsRoute
+  '/onboarding': typeof AuthenticatedOnboardingRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/supply-chain': typeof AuthenticatedSupplyChainRoute
   '/threats': typeof AuthenticatedThreatsRoute
@@ -117,10 +133,12 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/login': typeof LoginRoute
+  '/sign-up': typeof SignUpRoute
   '/_authenticated/alerts': typeof AuthenticatedAlertsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/intelligence': typeof AuthenticatedIntelligenceRoute
   '/_authenticated/investigations': typeof AuthenticatedInvestigationsRoute
+  '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/supply-chain': typeof AuthenticatedSupplyChainRoute
   '/_authenticated/threats': typeof AuthenticatedThreatsRoute
@@ -132,10 +150,12 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/login'
+    | '/sign-up'
     | '/alerts'
     | '/dashboard'
     | '/intelligence'
     | '/investigations'
+    | '/onboarding'
     | '/settings'
     | '/supply-chain'
     | '/threats'
@@ -145,10 +165,12 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
+    | '/sign-up'
     | '/alerts'
     | '/dashboard'
     | '/intelligence'
     | '/investigations'
+    | '/onboarding'
     | '/settings'
     | '/supply-chain'
     | '/threats'
@@ -159,10 +181,12 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/login'
+    | '/sign-up'
     | '/_authenticated/alerts'
     | '/_authenticated/dashboard'
     | '/_authenticated/intelligence'
     | '/_authenticated/investigations'
+    | '/_authenticated/onboarding'
     | '/_authenticated/settings'
     | '/_authenticated/supply-chain'
     | '/_authenticated/threats'
@@ -174,11 +198,19 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   LoginRoute: typeof LoginRoute
+  SignUpRoute: typeof SignUpRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sign-up': {
+      id: '/sign-up'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof SignUpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -228,6 +260,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/onboarding': {
+      id: '/_authenticated/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/investigations': {
       id: '/_authenticated/investigations'
       path: '/investigations'
@@ -271,6 +310,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedIntelligenceRoute: typeof AuthenticatedIntelligenceRoute
   AuthenticatedInvestigationsRoute: typeof AuthenticatedInvestigationsRoute
+  AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedSupplyChainRoute: typeof AuthenticatedSupplyChainRoute
   AuthenticatedThreatsRoute: typeof AuthenticatedThreatsRoute
@@ -282,6 +322,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedIntelligenceRoute: AuthenticatedIntelligenceRoute,
   AuthenticatedInvestigationsRoute: AuthenticatedInvestigationsRoute,
+  AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedSupplyChainRoute: AuthenticatedSupplyChainRoute,
   AuthenticatedThreatsRoute: AuthenticatedThreatsRoute,
@@ -295,6 +336,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   LoginRoute: LoginRoute,
+  SignUpRoute: SignUpRoute,
   AuthCallbackRoute: AuthCallbackRoute,
 }
 export const routeTree = rootRouteImport
