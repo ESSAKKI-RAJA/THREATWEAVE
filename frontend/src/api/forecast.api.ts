@@ -7,7 +7,8 @@ export const getForecast = createServerFn({ method: "POST" })
   .validator(z.object({ vendorId: z.string(), periods: z.number().optional().default(30) }))
   .handler(async ({ data }) => {
     try {
-      const res = await fetch(`http://localhost:8000/forecast/arima`, {
+      const forecastUrl = process.env.FORECAST_SERVICE_URL || "http://localhost:8000";
+      const res = await fetch(`${forecastUrl}/forecast/arima`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ vendor_id: data.vendorId, periods: data.periods }),
