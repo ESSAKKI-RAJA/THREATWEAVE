@@ -28,6 +28,7 @@ frontend/.output/
 frontend/.vinxi/
 frontend/.tanstack/**
 frontend/.nitro/
+frontend/.vercel/output/
 
 # Environment files
 .env
